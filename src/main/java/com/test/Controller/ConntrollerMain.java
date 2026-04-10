@@ -57,10 +57,10 @@ public class ConntrollerMain extends HttpServlet {
             Config.set(session, Config.FMT_LOCALE, locale);
 
             // [LOG] JSTL 설정 주입 확인
-            logger.info("[LANG] SUCCESS: Forced JSTL Locale to '{}'", locale.toString());
+            logger.debug("[LANG] SUCCESS: Forced JSTL Locale to '{}'", locale.toString());
         } else {
             // [LOG] 언어 설정이 없을 때의 경고
-            logger.info("[LANG] DEFAULT: No lang found in session, using default locale.");
+            logger.debug("[LANG] DEFAULT: No lang found in session, using default locale.");
             Config.set(session, Config.FMT_LOCALE, Locale.KOREAN);
         }
 
@@ -107,9 +107,9 @@ public class ConntrollerMain extends HttpServlet {
         } catch (Exception e) {
             logger.error("[DB ERROR] Dashboard data fetch failed!", e);
         } finally {
-            try { if(rs != null) rs.close(); } catch(Exception e) {}
-            try { if(pstmt != null) pstmt.close(); } catch(Exception e) {}
-            try { if(conn != null) conn.close(); } catch(Exception e) {}
+            try { if(rs != null) rs.close(); } catch(Exception e) { logger.error("ResultSet close error", e); }
+            try { if(pstmt != null) pstmt.close(); } catch(Exception e) { logger.error("PreparedStatement close error", e); }
+            try { if(conn != null) conn.close(); } catch(Exception e) { logger.error("Connection close error", e); }
         }
 
         // 4. JSP 포워딩

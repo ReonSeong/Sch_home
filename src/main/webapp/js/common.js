@@ -106,7 +106,7 @@ function initLangDropdown() {
             if (langValue) {
                 // 가장 안전하게 ContextPath 가져오는 방법
                 // 만약 localhost:8080/ 이면 "", localhost:8080/Project 면 "/Project" 반환
-                const host = window.location.host;
+                // const host = window.location.host;
                 const path = window.location.pathname;
                 const contextPath = path.substring(0, path.indexOf('/', 1) === -1 ? 0 : path.indexOf('/', 1));
 

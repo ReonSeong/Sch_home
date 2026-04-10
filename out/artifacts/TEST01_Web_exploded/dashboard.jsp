@@ -25,17 +25,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="dark-mode">
-<div style="display:none;">
-    DEBUG: 세션 lang = ${sessionScope.lang} <br>
-    DEBUG: 현재 로케일 = <%= response.getLocale() %>
-</div>
 
-<%-- 서버 콘솔 로그용 --%>
-<%
-    String debugLang = (String) session.getAttribute("lang");
-    System.out.println("[DEBUG] JSP 출력 직전 - 세션 lang: " + debugLang);
-%>
-<%-- 공통 헤더 (언어 변경 버튼이 여기 들어있어야 함) --%>
 <%@ include file="header.jsp" %>
 
 <div class="background-blobs">

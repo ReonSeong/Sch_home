@@ -20,7 +20,7 @@
 }
 
 h2 { font-size: 2.5rem; margin-bottom: 15px; font-weight: 500; letter-spacing: -1px; }
-.subtitle { color: var(--text-sub); font-size: 0.9rem; margin-bottom: 45px; line-height: 1.6; }
+.subtitle { color: var(--text-sub); font-size: 0.9rem; margin-bottom: 25px; line-height: 1.6; }
 
 /* --- 인풋 박스 (캡슐형) --- */
 .input-group { position: relative; margin-bottom: 15px; width: 100%; }
@@ -38,7 +38,7 @@ h2 { font-size: 2.5rem; margin-bottom: 15px; font-weight: 500; letter-spacing: -
 /* --- 로그인 버튼 --- */
 .login-btn {
     width: 100%; padding: 18px; background: var(--text-main); color: var(--bg-color);
-    border: none; border-radius: 50px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 35px; transition: 0.3s ease;
+    border: none; border-radius: 50px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 20px; transition: 0.3s ease;
 }
 .login-btn:hover { opacity: 0.85; transform: scale(1.01); }
 
@@ -73,7 +73,7 @@ h2 { font-size: 2.5rem; margin-bottom: 15px; font-weight: 500; letter-spacing: -
 .error-msg { color: #ff7675; font-size: 0.85rem; margin-bottom: 20px; }
 
 @media (max-width: 480px) {
-    .login-box { padding: 40px 25px; margin: 20px; }
+    .login-box { padding: 25px; margin: 20px; }
     h2 { font-size: 2rem; }
     .social-login { flex-direction: column; }
 }
