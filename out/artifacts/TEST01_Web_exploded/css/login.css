@@ -1,0 +1,79 @@
+/* --- 메인 컨테이너 --- */
+.main-container {
+    padding-top: 70px; /* 헤더 높이 확보 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* --- 로그인 박스 --- */
+.login-box {
+    width: 100%;
+    max-width: 440px;
+    padding: 60px 50px;
+    border-radius: 40px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+}
+
+h2 { font-size: 2.5rem; margin-bottom: 15px; font-weight: 500; letter-spacing: -1px; }
+.subtitle { color: var(--text-sub); font-size: 0.9rem; margin-bottom: 45px; line-height: 1.6; }
+
+/* --- 인풋 박스 (캡슐형) --- */
+.input-group { position: relative; margin-bottom: 15px; width: 100%; }
+.input-group .icon { position: absolute; left: 22px; top: 50%; transform: translateY(-50%); color: var(--text-sub); opacity: 0.6; pointer-events: none; z-index: 2; }
+.input-group input {
+    width: 100%; padding: 20px 20px 20px 55px; background: var(--input-bg);
+    border: 1.5px solid var(--input-border); border-radius: 50px; color: var(--text-main); font-size: 1rem; outline: none; transition: 0.3s;
+    position: relative; z-index: 1;
+}
+.input-group input:focus { border-color: black; background: #91c4e5; color: black; }
+
+/* 비밀번호 눈 아이콘 위치 수정 */
+.toggle-password { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--accent-blue); font-size: 1.1rem; z-index: 10; padding: 5px; }
+
+/* --- 로그인 버튼 --- */
+.login-btn {
+    width: 100%; padding: 18px; background: var(--text-main); color: var(--bg-color);
+    border: none; border-radius: 50px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 35px; transition: 0.3s ease;
+}
+.login-btn:hover { opacity: 0.85; transform: scale(1.01); }
+
+/* --- 소셜 로그인 (문제 해결 포인트) --- */
+.social-login {
+    display: flex; gap: 12px; margin: 30px 0;
+}
+.social-btn {
+    flex: 1;
+    padding: 15px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+
+    /* 예시 이미지와 똑같은 둥근 캡슐형으로 복구 */
+    border-radius: 50px;
+
+    color: var(--text-main);
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: 0.3s;
+}
+.social-btn:hover { background: var(--glass-border); }
+.social-btn i { font-size: 1rem; }
+
+.footer-links { font-size: 0.9rem; color: var(--text-sub); margin-top: 25px; }
+.footer-links a { color: var(--accent-blue); text-decoration: none; font-weight: 600; }
+
+.error-msg { color: #ff7675; font-size: 0.85rem; margin-bottom: 20px; }
+
+@media (max-width: 480px) {
+    .login-box { padding: 40px 25px; margin: 20px; }
+    h2 { font-size: 2rem; }
+    .social-login { flex-direction: column; }
+}

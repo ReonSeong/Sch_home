@@ -7,10 +7,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.RequestDispatcher;
-import java.io.IOException;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.jsp.jstl.core.Config; // JSTL 설정용
 
-// DB
+import java.io.IOException;
+import java.util.Locale; // 로케일 설정용
+
+// DB 관련
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,84 +32,90 @@ public class ConntrollerMain extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        logger.info("***Controller -- doGet! ***");
+        // [LOG] 대시보드 진입 시점 기록
+        logger.info("======= [START] Dashboard Servlet =======");
 
-
-        // 세션에서 로그인 정보 가져오기 (로그인 체크용)
+        // 1. 세션 및 로그인 체크
         HttpSession session = request.getSession();
         DTO sessionUser = (DTO) session.getAttribute("user");
 
         if (sessionUser == null) {
-            // 로그인 정보가 없으면 로그인 페이지로 튕겨내기
+            logger.warn("[AUTH] No session user found! Redirecting to login.jsp");
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
 
+        // 2. [핵심 디버깅] 세션 언어 설정 확인 및 JSTL 로케일 강제 주입
+        String lang = (String) session.getAttribute("lang");
+
+        // [LOG] 세션에 저장된 언어값이 무엇인지 확인
+        logger.info("[LANG] Session 'lang' value: {}", lang);
+
+        if (lang != null && !lang.isEmpty()) {
+            Locale locale = new Locale(lang);
+            // JSTL이 브라우저 언어 무시하고 세션 언어를 쓰도록 강제 설정
+            Config.set(session, Config.FMT_LOCALE, locale);
+
+            // [LOG] JSTL 설정 주입 확인
+            logger.info("[LANG] SUCCESS: Forced JSTL Locale to '{}'", locale.toString());
+        } else {
+            // [LOG] 언어 설정이 없을 때의 경고
+            logger.info("[LANG] DEFAULT: No lang found in session, using default locale.");
+            Config.set(session, Config.FMT_LOCALE, Locale.KOREAN);
+        }
+
+        // 3. DB 로직 시작
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
         try {
-            // 1. JNDI를 통해 context.xml에 설정된 리소스 찾기
             Context initContext = new InitialContext();
             Context envContext = (Context) initContext.lookup("java:/comp/env");
-
-            // "jdbc/myoracle"은 web.xml과 context.xml에 적은 이름과 일치
             DataSource ds = (DataSource) envContext.lookup("jdbc/myoracle");
 
-            // 2. 연결 얻기 (DriverManager.getConnection 대신 ds.getConnection 사용)
             conn = ds.getConnection();
-            logger.debug("DB connection established");
+            logger.debug("[DB] Connection established successfully.");
 
-            // 3. 쿼리 실행
             String sql = "SELECT * FROM MST_USER WHERE USER_ID = ?";
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, sessionUser.getUserId()); // 세션에 저장된 ID 활용
+            pstmt.setString(1, sessionUser.getUserId());
 
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
                 DTO user = new DTO();
 
-                // 1. basic identify
+                // User Identity & Shop Info Mapping
                 user.setIdx(rs.getInt("IDX"));
                 user.setUserId(rs.getString("USER_ID"));
                 user.setUserName(rs.getString("USER_NAME"));
-
-                // 2. shop info
                 user.setShopName(rs.getString("SHOP_NAME"));
                 user.setShopCode(rs.getString("SHOP_CODE"));
                 user.setNation(rs.getString("NATION"));
                 user.setAddress(rs.getString("ADDRESS"));
-
-                // 3. auth check
                 user.setRole(rs.getString("ROLE"));
                 user.setMgrLevel(rs.getInt("MGR_LEVEL"));
                 user.setPhone(rs.getString("PHONE"));
-
-                // 4. date check
                 user.setRegDate(rs.getString("REG_DATE"));
                 user.setLastLogin(rs.getString("LAST_LOGIN"));
 
-                // 로그로 확인 (선택 사항)
-                logger.debug("DTO 매핑 완료: " + user.getUserId() + " / " + user.getShopName());
-
+                logger.debug("[DB] User data mapping complete for ID: {}", user.getUserId());
                 request.setAttribute("userInfo", user);
-
             }
 
         } catch (Exception e) {
-            logger.error("DB error - 1001", e);
-            e.printStackTrace();
+            logger.error("[DB ERROR] Dashboard data fetch failed!", e);
         } finally {
-            // 4. 자원 반납 (중요: 커넥션 풀을 쓸 때는 반드시 닫아줘야 다시 풀로 돌아갑니다)
             try { if(rs != null) rs.close(); } catch(Exception e) {}
             try { if(pstmt != null) pstmt.close(); } catch(Exception e) {}
             try { if(conn != null) conn.close(); } catch(Exception e) {}
         }
 
-        // JSP 포워딩
-        request.setAttribute("name", "World");
+        // 4. JSP 포워딩
+        logger.info("[FORWARD] Forwarding request to dashboard.jsp");
+        logger.info("======= [END] Dashboard Servlet =======");
+
         RequestDispatcher dispatcher = request.getRequestDispatcher("/dashboard.jsp");
         dispatcher.forward(request, response);
     }
