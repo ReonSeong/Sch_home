@@ -2,105 +2,112 @@ package com.test.Controller;
 
 import com.test.Model.DTO;
 import jakarta.servlet.annotation.WebServlet;
-
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
-//DB
+import jakarta.servlet.http.HttpSession;
+
+// DB
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;     // DB 에러 처리를 위해 필요!
+import javax.sql.DataSource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 
-//Logging
+// Logging
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-// 1. 주소 매핑: 사용자가 어떤 주소로 들어올 때 이 컨트롤러를 실행할지 결정합니다.
-// 1. Adderes(URL) mapping
-@WebServlet("/hello")
+@WebServlet("/dashboard")
 public class ConntrollerMain extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(ConntrollerMain.class);
 
-    // 2. GET 방식의 요청을 처리하는 메서드
-    // 2. Method to deal with GET
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        logger.info("컨트롤러 진입 성공!");// 진입 확인
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        logger.info("***Controller -- doGet! ***");
 
-        logger.info("doGet 진입 성공!");
 
-        String url = "jdbc:mysql://localhost:3306/test";
-        String user = "root";
-        String password = "1234";
+        // 세션에서 로그인 정보 가져오기 (로그인 체크용)
+        HttpSession session = request.getSession();
+        DTO sessionUser = (DTO) session.getAttribute("user");
+
+        if (sessionUser == null) {
+            // 로그인 정보가 없으면 로그인 페이지로 튕겨내기
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
 
         try {
-            // 1. 드라이버 로드 (Tomcat 10 환경에서는 생략 가능하나 명시하면 안전함)
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            System.out.println("드라이버 로드");
+            // 1. JNDI를 통해 context.xml에 설정된 리소스 찾기
+            Context initContext = new InitialContext();
+            Context envContext = (Context) initContext.lookup("java:/comp/env");
 
-            // 2. 연결
-            Connection conn = DriverManager.getConnection(url, user, password);
-            System.out.println("DB연결");
+            // "jdbc/myoracle"은 web.xml과 context.xml에 적은 이름과 일치
+            DataSource ds = (DataSource) envContext.lookup("jdbc/myoracle");
 
-            // 3. 쿼리 실행 (DAY01 테이블 조회)
-            String sql = "SELECT * FROM DAY01 LIMIT 1";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery();
-            System.out.println("쿼리 실행");
+            // 2. 연결 얻기 (DriverManager.getConnection 대신 ds.getConnection 사용)
+            conn = ds.getConnection();
+            logger.debug("DB connection established");
 
+            // 3. 쿼리 실행
+            String sql = "SELECT * FROM MST_USER WHERE USER_ID = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, sessionUser.getUserId()); // 세션에 저장된 ID 활용
+
+            rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                DTO dto = new DTO();
-                dto.setId(rs.getString("id"));     // DB 컬럼명 확인 필수!
-                dto.setName(rs.getString("name"));
+                DTO user = new DTO();
 
-                System.out.println(dto.toString());
+                // 1. basic identify
+                user.setIdx(rs.getInt("IDX"));
+                user.setUserId(rs.getString("USER_ID"));
+                user.setUserName(rs.getString("USER_NAME"));
 
-                // 4. JSP로 전달
-                request.setAttribute("user", dto);
+                // 2. shop info
+                user.setShopName(rs.getString("SHOP_NAME"));
+                user.setShopCode(rs.getString("SHOP_CODE"));
+                user.setNation(rs.getString("NATION"));
+                user.setAddress(rs.getString("ADDRESS"));
+
+                // 3. auth check
+                user.setRole(rs.getString("ROLE"));
+                user.setMgrLevel(rs.getInt("MGR_LEVEL"));
+                user.setPhone(rs.getString("PHONE"));
+
+                // 4. date check
+                user.setRegDate(rs.getString("REG_DATE"));
+                user.setLastLogin(rs.getString("LAST_LOGIN"));
+
+                // 로그로 확인 (선택 사항)
+                logger.debug("DTO 매핑 완료: " + user.getUserId() + " / " + user.getShopName());
+
+                request.setAttribute("userInfo", user);
+
             }
 
-            rs.close();
-            pstmt.close();
-            conn.close();
-
         } catch (Exception e) {
+            logger.error("DB error - 1001", e);
             e.printStackTrace();
+        } finally {
+            // 4. 자원 반납 (중요: 커넥션 풀을 쓸 때는 반드시 닫아줘야 다시 풀로 돌아갑니다)
+            try { if(rs != null) rs.close(); } catch(Exception e) {}
+            try { if(pstmt != null) pstmt.close(); } catch(Exception e) {}
+            try { if(conn != null) conn.close(); } catch(Exception e) {}
         }
 
-        try {
-            request.setAttribute("name", "World");
-
-            // 2. 연결할 JSP 파일 경로 지정
-            // webapp 폴더 바로 아래에 index.jsp가 있다면 "/index.jsp"
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
-
-            // 3. 실제로 넘기기 (Forward)
-            dispatcher.forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // 3. 실제 처리를 담당할 커스텀 메서드 (가독성을 위해 분리)
-    // 3. Custom method
-    private void processRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        // [비즈니스 로직 예시]
-        String message = "드디어 첫 컨트롤러가 작동합니다!";
-
-        // [Model에 데이터 담기]
-        request.setAttribute("msg", message);
-
-        // [View로 보내기]
-        request.getRequestDispatcher("/view.jsp").forward(request, response);
+        // JSP 포워딩
+        request.setAttribute("name", "World");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/dashboard.jsp");
+        dispatcher.forward(request, response);
     }
 }
