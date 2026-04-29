@@ -16,8 +16,19 @@
           <element id="library" level="project" name="Maven: jakarta.el:jakarta.el-api:5.0.0" />
           <element id="library" level="project" name="Maven: org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1" />
           <element id="library" level="project" name="Maven: com.google.protobuf:protobuf-java:3.21.9" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-webmvc:6.1.5" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-aop:6.1.5" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-beans:6.1.5" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-core:6.1.5" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-jcl:6.1.5" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-expression:6.1.5" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-web:6.1.5" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-context:6.1.5" />
+          <element id="library" level="project" name="Maven: io.micrometer:micrometer-observation:1.12.4" />
+          <element id="library" level="project" name="Maven: io.micrometer:micrometer-commons:1.12.4" />
         </element>
       </element>
+      <element id="artifact" artifact-name="TEST01:war exploded" />
     </root>
   </artifact>
 </component>

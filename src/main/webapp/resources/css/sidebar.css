@@ -1,0 +1,179 @@
+/* ==========================================
+   사이드바 (Sidebar - Desktop)
+   ========================================== */
+.sidebar {
+    width: 260px;
+    height: calc(100vh - 70px);
+    position: fixed;
+    top: 70px;
+    left: 0;
+    background: var(--dropdown-bg) !important;
+    border-right: 1px solid var(--glass-border);
+    display: flex;
+    flex-direction: column;
+    z-index: 900;
+}
+
+/* --- [수정 포인트] 사이드바와 메인 컨텐츠 겹침 방지 --- */
+@media (min-width: 1025px) {
+    /* 사이드바가 fixed이므로, 메인 컨텐츠를 사이드바 너비만큼 강제로 밀어냅니다. */
+    .main-content {
+        margin-left: 260px !important;
+        width: calc(100% - 260px) !important;
+        box-sizing: border-box;
+    }
+}
+
+/* 1366px 해상도에서 공간이 부족할 경우 사이드바를 살짝 축소 */
+@media (min-width: 1025px) and (max-width: 1366px) {
+    .sidebar {
+        width: 240px;
+    }
+    .main-content {
+        margin-left: 240px !important;
+        width: calc(100% - 240px) !important;
+    }
+}
+
+.sidebar-header {
+    padding: 25px 20px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-info i {
+    font-size: 2rem;
+    color: var(--accent-blue);
+}
+
+.u-name {
+    font-weight: 700;
+    color: var(--text-main);
+    font-size: 0.95rem;
+}
+
+.u-role {
+    font-size: 0.75rem;
+    color: var(--text-sub);
+}
+
+.side-nav {
+    flex: 1;
+    padding: 15px 0;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 25px;
+    text-decoration: none;
+    color: var(--text-sub);
+    transition: 0.3s;
+    font-size: 0.9rem;
+}
+
+.nav-item:hover, .nav-item.active {
+    color: var(--text-main);
+    background: rgba(52, 152, 219, 0.1);
+    border-right: 3px solid var(--accent-blue);
+}
+
+.sidebar-footer {
+    padding: 15px;
+    font-size: 0.7rem;
+    color: var(--text-sub);
+    text-align: center;
+    border-top: 1px solid var(--glass-border);
+    opacity: 0.6;
+}
+
+/* ==========================================
+   모바일 전용 드롭다운 메뉴 (Sidebar 대체)
+   ========================================== */
+.mobile-menu-wrapper {
+    display: none;
+}
+
+.custom-dropdown {
+    width: 100%;
+    background: var(--dropdown-bg) !important;
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    position: relative;
+}
+
+.dropdown-selected {
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: var(--text-main);
+    font-size: 0.9rem;
+}
+
+.dropdown-selected .arrow {
+    margin-left: auto;
+    transition: 0.3s;
+}
+
+.dropdown-options {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    background: var(--dropdown-bg) !important;
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    display: none;
+    z-index: 10005;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+#mobileDropdown.active .dropdown-options {
+    display: block;
+}
+
+#mobileDropdown.active .arrow {
+    transform: rotate(180deg);
+}
+
+.option {
+    padding: 12px 20px;
+    color: var(--text-sub);
+    border-bottom: 1px solid var(--glass-border);
+    cursor: pointer;
+}
+
+.option:last-child {
+    border-bottom: none;
+}
+
+.option.active, .option:hover {
+    color: var(--text-main);
+    background: rgba(52, 152, 219, 0.1);
+}
+
+/* 반응형 사이드바 처리 */
+@media (max-width: 1024px) {
+    .sidebar { display: none !important; }
+    /* 모바일에서는 메인 컨텐츠 마진 제거 */
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+    .mobile-menu-wrapper {
+        display: block !important;
+        padding: 10px 15px 5px !important;
+        background: var(--bg-color);
+        position: sticky;
+        top: 70px;
+        z-index: 950;
+    }
+}

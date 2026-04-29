@@ -7,21 +7,23 @@
 
 package com.test.Controller;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 
-// Catch empty request ("/")
-@WebServlet("")
-public class RootController extends HttpServlet {
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+@Controller // 스프링 MVC 컨트롤러 선언
+public class RootController {
 
-        // redirect to Login page
-        response.sendRedirect(request.getContextPath() + "/login.jsp");
+    @GetMapping("/")
+    public String index(HttpSession session) {
+        // 1. 세션 체크 (중앙 보안 로직)
+        // 세션에 유저 정보가 이미 있다면 대시보드로 자동 이동시킵니다.
+        if (session.getAttribute("user") != null) {
+            return "redirect:/dashboard"; // DashboardController 주소로 리다이렉트
+        }
+
+        // 2. 세션이 없다면 로그인 페이지로 연결
+        // ViewResolver가 "/WEB-INF/views/login.jsp"를 찾아 화면을 보여줍니다.
+        return "login";
     }
 }

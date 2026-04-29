@@ -1,0 +1,75 @@
+/* ==========================================
+   모달 공통 (Modal Structure)
+   ========================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    transition: opacity 0.3s ease;
+}
+
+.modal-content {
+    background: var(--dropdown-bg) !important;
+    border: 1px solid var(--glass-border);
+    border-radius: 25px;
+    width: 90%;
+    max-width: 500px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+
+.modal-header {
+    padding: 20px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.modal-header h3 { font-size: 1.2rem; font-weight: 700; color: var(--text-main); }
+
+.modal-body { padding: 25px; }
+
+.modal-footer {
+    padding: 15px 25px;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-close {
+    background: none; border: none;
+    color: var(--text-sub); font-size: 1.5rem;
+    cursor: pointer; transition: 0.2s;
+}
+.btn-close:hover { color: var(--text-main); }
+
+.hidden { display: none !important; }
+
+/* 글래스모피즘 입력창 스타일 */
+.form-input {
+    width: 100%;
+    padding: 12px 15px;
+    margin : 15px 0 0 0;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #fff;
+    outline: none;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+}

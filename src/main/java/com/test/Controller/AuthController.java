@@ -1,67 +1,41 @@
-/*
-  Created by IntelliJ IDEA.
-  User: ReonQ
-  Date: 2026-04-10
-  Time: 오후 5:18
-*/
 package com.test.Controller;
 
-import com.test.Model.AuthDAO;
-import com.test.Model.DTO;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import com.test.DAO.AuthDAO;
+import com.test.Model.AuthDTO;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.io.IOException;
+@Controller
+@RequestMapping("/auth") // 클래스 레벨에 공통 경로 설정
+public class AuthController {
 
-// /auth/login 또는 /auth/logout으로 들어오는 모든 요청을 처리
-@WebServlet("/auth/*")
-public class AuthController extends HttpServlet {
+    @PostMapping("/login")
+    public String handleLogin(
+            @RequestParam("userId") String userId,
+            @RequestParam("userPw") String userPw,
+            HttpSession session) {
 
-    @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-
-        // URL 끝부분을 잘라서 명령(action) 확인
-        String uri = request.getRequestURI();
-        String action = uri.substring(uri.lastIndexOf("/") + 1);
-
-        if ("login".equals(action)) {
-            handleLogin(request, response);
-        } else if ("logout".equals(action)) {
-            handleLogout(request, response);
-        }
-    }
-
-    // [로그인 처리]
-    private void handleLogin(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String userId = request.getParameter("userId");
-        String userPw = request.getParameter("userPw");
-
-        // 셰프(LoginDAO) 호출
-        AuthDAO dao = new AuthDAO();
-        DTO user = dao.loginCheck(userId, userPw);
+        AuthDAO DAO = new AuthDAO();
+        AuthDTO user = DAO.loginCheck(userId, userPw);
 
         if (user != null) {
-            // 로그인 성공: 세션에 유저 정보 저장
-            HttpSession session = request.getSession();
             session.setAttribute("user", user);
-            response.sendRedirect(request.getContextPath() + "/dashboard.jsp");
+            return "redirect:/dashboard"; // 성공 시 대시보드로 이동
         } else {
-            // 로그인 실패: 에러 메시지와 함께 back
-            response.sendRedirect(request.getContextPath() + "/login.jsp?error=invalid");
+            return "redirect:/?error=invalid"; // 실패 시 에러 파라미터와 함께 루트로 이동
         }
     }
 
     // [로그아웃 처리]
-    private void handleLogout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession(false);
+    @GetMapping("/logout")
+    public String handleLogout(HttpSession session) {
         if (session != null) {
-            session.invalidate(); // 세션 파괴
+            session.invalidate(); // 세션 무효화
         }
-        response.sendRedirect(request.getContextPath() + "/login.jsp");
+        return "redirect:/"; // 로그아웃 후 루트("/") 주소로 이동
     }
 }

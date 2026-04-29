@@ -1,0 +1,97 @@
+/* ==========================================
+   대시보드 전체 레이아웃 (Main Layout)
+   ========================================== */
+.dashboard-container {
+    display: flex;
+    padding-top: 35px;
+    min-height: 100vh;
+    background-color: var(--bg-color);
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 260px; /* sidebar width */
+    padding: 50px 40px;
+    min-width: 0;
+}
+
+/* ==========================================
+   콘텐츠 헤더 (Content Header)
+   ========================================== */
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+.content-header h2 { font-size: 1.6rem; font-weight: 700; color: var(--text-main); }
+.content-header p { color: var(--text-sub); font-size: 0.9rem; }
+
+/* ==========================================
+   위젯 그리드 & 카드 (Widgets)
+   ========================================== */
+.widget-grid {
+    display: grid;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+
+.widget-card {
+    background: var(--dropdown-bg) !important;
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 22px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+.widget-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.25); }
+
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.card-value { font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
+.card-label { font-size: 0.85rem; color: var(--text-sub); margin-bottom: 12px; }
+
+.card-badge { font-size: 0.7rem; padding: 3px 7px; border-radius: 5px; font-weight: 600; }
+.card-badge.increase { background: rgba(46, 204, 113, 0.12); color: #2ecc71; }
+.card-badge.decrease { background: rgba(231, 76, 60, 0.12); color: #e74c3c; }
+
+.progress-wrapper { width: 100%; height: 6px; background: var(--input-bg); border-radius: 10px; margin: 15px 0 10px; }
+.progress-bar { height: 100%; border-radius: 10px; }
+.card-footer-info { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-sub); }
+
+/* 가상 차트 (Mock Charts) */
+.mock-chart { width: 100%; height: 45px; margin-top: 10px; opacity: 0.8; }
+.chart-green { background: linear-gradient(to right, transparent, rgba(46, 204, 113, 0.1)); border-bottom: 2px solid #2ecc71; }
+.chart-orange { background: linear-gradient(to right, transparent, rgba(241, 196, 15, 0.1)); border-bottom: 2px solid #f1c40f; }
+.chart-blue { background: linear-gradient(to right, transparent, rgba(52, 152, 219, 0.1)); border-bottom: 2px solid #3498db; }
+
+/* ==========================================
+   대시보드 반응형 (Responsive)
+   ========================================== */
+
+/* 1. 중형 화면 (1025px ~ 1300px) */
+@media (min-width: 1025px) and (max-width: 1300px) {
+    .main-content { margin-left: 220px; padding: 20px 25px; }
+}
+
+/* 2. 태블릿 및 모바일 (1024px 이하) */
+@media (max-width: 1024px) {
+    .dashboard-container { flex-direction: column; padding-top: 40px; }
+    .main-content {
+        margin-left: 0;
+        padding: 0 15px 20px !important;
+        width: 100%;
+    }
+    .content-header { margin-top: 5px; margin-bottom: 15px; padding: 0 5px; }
+    .content-header h2 { font-size: 1.3rem; }
+
+    .widget-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .widget-card { padding: 15px; }
+    .card-value { font-size: 1.2rem; }
+}
+
+/* 3. 스마트폰 (768px 이하) */
+@media (max-width: 768px) {
+    .grid-3 { grid-template-columns: 1fr; }
+    .main-content { padding: 0 12px 15px !important; }
+}

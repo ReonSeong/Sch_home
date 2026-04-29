@@ -1,0 +1,206 @@
+/* ==========================================
+   테이블 배치 레이아웃 (Table Layout)
+   ========================================== */
+.floor-plan-wrapper {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* --- 추가된 부분 --- */
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto; /* 화면이 좁아지면 사이드바를 침범하지 않고 스크롤 발생 */
+}
+
+#floor-plan {
+    width: 100%;
+    max-width: 1000px;
+    min-width: 760px; /* 1366 해상도에서도 배치가 깨지지 않는 최소 너비 */
+    height: 600px;
+    background: var(--dropdown-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 25px;
+    position: relative;
+    overflow: hidden; /* 테이블 아이템이 판 밖으로 나가지 않게 함 */
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+/* 편집 모드 스타일 보강 */
+#floor-plan.edit-mode {
+    border: 2px dashed var(--accent-blue);
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.table-item {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
+    border-radius: 18px;
+    position: absolute; /* 위치값(left, top)을 유지하기 위해 필수 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    z-index: 10;
+    transition: background 0.3s, transform 0.2s; /* 부드러운 호버 효과 */
+}
+
+.table-name { font-weight: 700; font-size: 1rem; margin-bottom: 3px; }
+.table-status-text { font-size: 0.7rem; opacity: 0.8; }
+
+/* ==========================================
+   주문 현황 상세 (Order Status Detail)
+   ========================================== */
+.order-summary { display: flex; gap: 15px; margin-bottom: 20px; }
+
+.summary-box {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+.summary-box .label { font-size: 0.75rem; color: var(--text-sub); }
+
+.order-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 5px;
+    border-bottom: 1px solid var(--glass-border);
+    font-size: 0.9rem;
+}
+
+.total-amount {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px solid var(--glass-border);
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+}
+
+/* 버튼 영역 반응형 */
+.control-panel {
+    margin-top: 25px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap; /* 모바일에서 버튼이 넘치면 다음 줄로 */
+    justify-content: center;
+}
+
+/* ==========================================
+   1366x1024 특화 반응형 조정
+   ========================================== */
+@media (max-width: 1366px) {
+    #floor-plan {
+        height: 500px; /* 세로가 짧은 해상도를 위해 높이 축소 */
+    }
+    .table-item {
+        width: 90px;
+        height: 90px;
+    }
+}
+/* 공통 버튼 베이스 */
+.btn-modal {
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--text-main);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* [배치 수정], [저장] - Primary Glass */
+.btn-modal.primary {
+    background: rgba(52, 152, 219, 0.15); /* 블루 톤 투명도 */
+    border: 1px solid rgba(52, 152, 219, 0.4);
+}
+
+.btn-modal.primary:hover {
+    background: rgba(52, 152, 219, 0.3);
+    box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+    transform: translateY(-2px);
+}
+
+/* [추가], [취소] - Secondary Glass */
+.btn-modal.secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+}
+
+.btn-modal.secondary:hover {
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+/* [저장하기] 전용 - Success Glass */
+#btn-save.primary {
+    background: rgba(46, 204, 113, 0.15);
+    border: 1px solid rgba(46, 204, 113, 0.4);
+}
+
+#btn-save.primary:hover {
+    background: rgba(46, 204, 113, 0.3);
+    box-shadow: 0 8px 25px rgba(46, 204, 113, 0.3);
+}
+
+/* [취소] 전용 - Danger Glass (필요 시) */
+#btn-cancel.secondary:hover {
+    background: rgba(231, 76, 60, 0.15);
+    border-color: rgba(231, 76, 60, 0.4);
+    color: #ff7675;
+}
+/* 테이블 아이템 내 삭제 버튼 */
+.delete-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    background: rgba(231, 76, 60, 0.8); /* 빨간색 계열 */
+    color: white;
+    border-radius: 50%;
+    display: none; /* 기본적으론 숨김 */
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    border: 2px solid var(--glass-border);
+    backdrop-filter: blur(5px);
+    transition: all 0.2s;
+    z-index: 20;
+}
+
+.delete-btn:hover {
+    background: #e74c3c;
+    transform: scale(1.2);
+}
+
+/* 편집 모드일 때만 삭제 버튼 표시 */
+#floor-plan.edit-mode .delete-btn {
+    display: flex;
+}

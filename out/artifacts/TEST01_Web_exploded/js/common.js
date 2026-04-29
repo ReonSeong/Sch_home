@@ -15,23 +15,37 @@ document.addEventListener('DOMContentLoaded', () => {
 function initTheme() {
     const themeToggle = document.querySelector('#darkModeToggle');
     const body = document.body;
+
+    // 1. 초기 테마 설정 (저장된 게 없으면 기본 'dark')
     const savedTheme = localStorage.getItem('theme') || 'dark';
 
+    // 초기 상태 반영: 확실하게 하기 위해 클래스를 정리하고 새로 고정
     if (savedTheme === 'light') {
+        body.classList.remove('dark-mode');
         body.classList.add('light-mode');
         if (themeToggle) themeToggle.checked = false;
+    } else {
+        body.classList.remove('light-mode');
+        body.classList.add('dark-mode');
+        if (themeToggle) themeToggle.checked = true;
     }
 
+    // 2. 토글 이벤트
     if (themeToggle) {
-        themeToggle.onchange = (e) => {
-            if (e.target.checked) {
-                body.classList.remove('light-mode');
+        themeToggle.addEventListener('change', () => {
+            if (themeToggle.checked) {
+                // 다크 모드 활성화
+                body.classList.replace('light-mode', 'dark-mode') || body.classList.add('dark-mode');
                 localStorage.setItem('theme', 'dark');
             } else {
-                body.classList.add('light-mode');
+                // 라이트 모드 활성화
+                body.classList.replace('dark-mode', 'light-mode') || body.classList.add('light-mode');
                 localStorage.setItem('theme', 'light');
             }
-        };
+
+            // [선택 사항] 콘솔 로그로 상태 확인 (디버깅용)
+            console.log("현재 테마:", localStorage.getItem('theme'));
+        });
     }
 }
 
@@ -71,58 +85,46 @@ function initMobileDropdown() {
 }
 
 /**
- * 헤더 언어 선택 드롭다운 (서버 컨트롤러 연동 강화)
+ * 헤더 언어 선택 드롭다운
  */
 function initLangDropdown() {
     const langDropdown = document.getElementById('langDropdown');
-    if (!langDropdown) return;
-
-    const selected = langDropdown.querySelector('.lang-selected');
-    const options = langDropdown.querySelectorAll('.lang-opt');
     const currentLangText = document.getElementById('currentLangText');
+    if (!langDropdown || !currentLangText) return;
 
-    // 1. 현재 URL 파라미터로 텍스트 표시 업데이트
-    const urlParams = new URLSearchParams(window.location.search);
-    const langParam = urlParams.get('lang');
-    if (langParam) {
-        currentLangText.textContent = langParam.toUpperCase();
-    }
+    const options = langDropdown.querySelectorAll('.lang-opt');
+    const savedLang = localStorage.getItem('preferredLang') || 'ko';
+
+    // 1. 초기 텍스트 설정
+    const initialOpt = Array.from(options).find(opt => opt.dataset.value === savedLang);
+    if (initialOpt) currentLangText.textContent = initialOpt.textContent;
 
     // 2. 드롭다운 토글
-    selected.onclick = (e) => {
+    langDropdown.querySelector('.lang-selected').onclick = (e) => {
         e.stopPropagation();
         langDropdown.classList.toggle('active');
-        document.getElementById('mobileDropdown')?.classList.remove('active');
     };
 
-    // 3. [핵심] 언어 선택 시 컨트롤러 호출
-    options.forEach(opt => {
-        opt.onclick = function(e) {
-            e.stopPropagation();
-            const langValue = this.getAttribute('data-value');
+    // 3. 언어 선택 (수정된 로직)
+    langDropdown.querySelector('.lang-options').onclick = (e) => {
+        const opt = e.target.closest('.lang-opt');
+        if (!opt) return;
 
-            console.log("[JS] 선택된 언어:", langValue);
+        const langValue = opt.dataset.value;
+        if (langValue) {
+            // 로컬스토리지 저장
+            localStorage.setItem('preferredLang', langValue);
 
-            if (langValue) {
-                // 가장 안전하게 ContextPath 가져오는 방법
-                // 만약 localhost:8080/ 이면 "", localhost:8080/Project 면 "/Project" 반환
-                // const host = window.location.host;
-                const path = window.location.pathname;
-                const contextPath = path.substring(0, path.indexOf('/', 1) === -1 ? 0 : path.indexOf('/', 1));
+            // ContextPath 계산
+            const cp = window.location.pathname.split('/')[1];
+            const contextPath = cp && !cp.includes('.') ? `/${cp}` : '';
+            const currentPath = window.location.pathname;
+            const targetUrl = `${contextPath}/changeLang?lang=${langValue}&referer=${encodeURIComponent(currentPath)}`;
 
-                // 최종 타겟 URL 생성
-                const targetUrl = contextPath + "/changeLang?lang=" + langValue;
+            window.location.href = targetUrl;
+        }
+    };
 
-                console.log("[JS] 이동할 URL:", targetUrl);
-
-                // 페이지 이동 (이때 LanguageController가 호출되어야 함)
-                window.location.href = targetUrl;
-            }
-        };
-    });
-
-    // 바깥 영역 클릭 시 닫기
-    document.addEventListener('click', () => {
-        langDropdown.classList.remove('active');
-    });
+    // 4. 바깥 클릭 시 닫기
+    document.addEventListener('click', () => langDropdown.classList.remove('active'));
 }
