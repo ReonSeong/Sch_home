@@ -27,10 +27,10 @@
     </script>
 
 </head>
+<%@ include file="common/header.jsp" %>
 
 <body class="dark-mode">
 
-<%@ include file="common/header.jsp" %>
 
 <div class="background-blobs">
     <div class="blob1"></div>

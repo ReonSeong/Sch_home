@@ -18,15 +18,27 @@
   - [x] add mst_table_layout 
   - [x] add Talbe Controller,DAO,DTO
 ##  2026-04-30
+- [x] add menu manage
+  - [x] add new DB table (MST_menu_info, dtl_menu_info)
+  - [x] add MenuController, MenuDAO, MenuDTO
+- [x] add lombok
+- [x] add mapper
+- [x] add fileUpload (util)
+##  2026-05-01
+- [ ] image Upload test(jpg,png) + validation
+- [ ] Check Multi - Language (when finish logic and design, lang.xml)
+- [ ] Unify Code Style.(mapper, controller, DAO, DTO)
 - [ ] show restaurant current Table status (what ordered)
   - [ ] DB
-- [ ] Check Multi - Language (when finish logic and design, lang.xml)
-- [ ] add menu manage
+
+##
 - [ ] set sales status
 - [ ] stock manage
 - [ ] Customer management
 - [ ] Auth management
 - [ ] AWS operate
----
+- [ ] API connection with local web market (Macro, Carefu etc)
+-
+-
 
 ### 💡 참고 사항

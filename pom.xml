@@ -83,6 +83,76 @@
             <version>2.15.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version> <!-- 버전을 명시하는 것이 안전합니다 -->
+            <scope>provided</scope>
+        </dependency>
+
+    <!-- 1. MyBatis Core -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.5.15</version>
+        </dependency>
+
+    <!-- 2. MyBatis Spring (Spring 6 / Jakarta EE 환경용) -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+
+    <!-- 3. Spring JDBC (MyBatis 연동에 필수) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+    <!-- 4. Connection Pool (HikariCP) -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+
+    <!-- 5. Spring Transaction (DB 트랜잭션 관리) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+    <!-- 6. image format change -->
+        <!-- 1. 이미지 처리 코어 엔진 -->
+        <dependency>
+            <groupId>com.sksamuel.scrimage</groupId>
+            <artifactId>scrimage-core</artifactId>
+            <version>4.0.34</version>
+        </dependency>
+
+        <!-- 2. WebP 변환 전용 라이브러리 (WebpWriter 포함) -->
+        <dependency>
+            <groupId>com.sksamuel.scrimage</groupId>
+            <artifactId>scrimage-webp</artifactId>
+            <version>4.0.34</version>
+        </dependency>
+
+<!--TODO: add avif format changer-->
+<!--        <dependency>-->
+<!--            <groupId>com.sksamuel.scrimage</groupId>-->
+<!--            <artifactId>scrimage-nio</artifactId>-->
+<!--            <version>4.0.40</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.sksamuel.scrimage</groupId>-->
+<!--            <artifactId>scrimage-avif-jdk</artifactId>-->
+<!--            <version>4.0.40</version>-->
+<!--        </dependency>-->
+
+
     </dependencies>
 
     <build>
@@ -98,7 +168,6 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-
             <!-- WAR 빌드 설정 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

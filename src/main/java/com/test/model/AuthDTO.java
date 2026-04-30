@@ -5,7 +5,7 @@
   Time: 오후 5:03
 */
 
-package com.test.Model;
+package com.test.model;
 
 public class AuthDTO {
         // 1. fields

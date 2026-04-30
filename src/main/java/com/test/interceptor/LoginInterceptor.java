@@ -5,7 +5,7 @@
   Time: 오후 6:39
 */
 
-package com.test.Interceptor;
+package com.test.interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,17 +22,19 @@ public class LoginInterceptor implements HandlerInterceptor {
         HttpSession session = request.getSession();
         String requestURI = request.getRequestURI();
         String contextPath = request.getContextPath();
-
-        // 1. 제외할 경로 정의 (Context Path 제외 순수 경로)
         String pureURI = requestURI.replace(contextPath, "");
 
-        // 2. 루프 방지: 루트("/")나 로그인 처리 경로("/auth/login")는 체크 없이 통과
-        if (pureURI.equals("/") || pureURI.equals("") || pureURI.contains("/auth/")) {
+        // 1. 제외할 경로 정의 (로그인, 인증 관련 + 정적 리소스 추가)
+        if (pureURI.equals("/") ||
+                pureURI.equals("") ||
+                pureURI.contains("/auth/") ||
+                pureURI.startsWith("/resources/")) { // <-- 이 줄을 반드시 추가!
             return true;
         }
 
+        // 2. 세션 체크
         if (session.getAttribute("user") == null) {
-            logger.warn("세션 없음: {} -> 루트로 리다이렉트", requestURI);
+            logger.warn("비로그인 사용자 접근 차단: {}", requestURI);
             response.sendRedirect(contextPath + "/");
             return false;
         }

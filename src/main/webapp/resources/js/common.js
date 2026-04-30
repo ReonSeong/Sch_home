@@ -1,6 +1,6 @@
 /**
  * Updated: 2026-04-10
- * Description: Theme, Mobile Menu, Language Dropdown 통합 관리
+ * Description: Theme, Mobile Menu, Language Dropdown + File Upload 통합 관리
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -9,17 +9,85 @@ document.addEventListener('DOMContentLoaded', () => {
     initLangDropdown();
 });
 
+/* ===========================================
+   1. 공통 파일 업로드 및 미리보기 로직
+   =========================================== */
+
+/**
+ * 공통 파일 업로드 함수 (AJAX - FormData 활용)
+ * @param {String} formId - 폼 선택자 (예: '#addMenuForm')
+ * @param {String} url - 서버 엔드포인트 URL
+ * @param {Object} extraData - 추가로 전송할 파라미터 객체
+ * @param {Function} callback - 성공 시 실행할 콜백 함수
+ */
+function commonFileUpload(formId, url, extraData, callback) {
+    const form = document.querySelector(formId);
+    if (!form) return;
+
+    const formData = new FormData(form);
+
+    // 추가 데이터(category, regUser 등) 바인딩
+    if (extraData) {
+        Object.keys(extraData).forEach(key => {
+            formData.append(key, extraData[key]);
+        });
+    }
+
+    // jQuery가 포함되어 있다면 $.ajax 사용 (가독성 및 기존 코드 호환성)
+    $.ajax({
+        url: url,
+        type: "POST",
+        processData: false, // 파일 전송 시 필수
+        contentType: false, // 파일 전송 시 필수
+        data: formData,
+        success: (res) => {
+            if (typeof callback === "function") callback(res);
+        },
+        error: (err) => {
+            console.error("Upload Error:", err);
+            alert("업로드 중 오류가 발생했습니다.");
+        }
+    });
+}
+
+/**
+ * 이미지 미리보기 공통 함수
+ * @param {HTMLInputElement} input - 파일 인풋 엘리먼트
+ * @param {String} previewId - 이미지를 보여줄 img 태그 ID (예: '#imagePreview')
+ * @param {String} placeholderId - 업로드 아이콘 등 가릴 박스 ID (예: '#uploadPlaceholder')
+ */
+function handleImagePreview(input, previewId, placeholderId) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.querySelector(previewId);
+            const placeholder = document.querySelector(placeholderId);
+
+            if(preview) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                preview.style.display = 'block';
+            }
+            if(placeholder) {
+                placeholder.classList.add('hidden');
+                placeholder.style.display = 'none';
+            }
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+/* ===========================================
+   2. 기존 UI 로직 (Theme, Dropdowns)
+   =========================================== */
+
 function initTheme() {
     const themeToggle = document.querySelector('#darkModeToggle');
     const body = document.body;
     const savedTheme = localStorage.getItem('theme') || 'dark';
 
-    // 스위치 체크 상태 초기화
     if (themeToggle) {
         themeToggle.checked = (savedTheme !== 'light');
-    }
-
-    if (themeToggle) {
         themeToggle.addEventListener('change', () => {
             if (themeToggle.checked) {
                 body.classList.replace('light-mode', 'dark-mode') || body.classList.add('dark-mode');
@@ -42,7 +110,6 @@ function initMobileDropdown() {
 
     selected.onclick = (e) => {
         e.stopPropagation();
-        // 언어 드롭다운이 열려있으면 닫기
         document.getElementById('langDropdown')?.classList.remove('active');
         dropdown.classList.toggle('active');
     };
@@ -55,7 +122,6 @@ function initMobileDropdown() {
         };
     });
 
-    // 현재 경로에 따른 텍스트 활성화
     const currentPath = window.location.pathname;
     options.forEach(opt => {
         const val = opt.getAttribute('data-value');
@@ -66,18 +132,10 @@ function initMobileDropdown() {
     });
 }
 
-/**
- * 헤더 언어 선택 드롭다운 관리
- * - 사용자가 언어를 클릭하면 localStorage를 즉시 갱신하고
- * - 서버 컨트롤러(changeLang)를 호출하여 세션과 동기화합니다.
- */
 function initLangDropdown() {
     const langDropdown = document.getElementById('langDropdown');
-    const currentLangText = document.getElementById('currentLangText');
+    if (!langDropdown) return;
 
-    if (!langDropdown || !currentLangText) return;
-
-    // 1. 드롭다운 토글
     const selectedArea = langDropdown.querySelector('.lang-selected');
     if (selectedArea) {
         selectedArea.onclick = (e) => {
@@ -86,7 +144,6 @@ function initLangDropdown() {
         };
     }
 
-    // 2. 언어 옵션 클릭 (이벤트 위임 보강)
     const optionsArea = langDropdown.querySelector('.lang-options');
     if (optionsArea) {
         optionsArea.onclick = (e) => {
@@ -95,14 +152,8 @@ function initLangDropdown() {
 
             const langValue = opt.dataset.value;
             if (langValue) {
-                // [확인용] 일단 클릭된 값부터 찍어보기
-                console.log("클릭된 언어:", langValue);
-
                 localStorage.setItem('preferredLang', langValue);
-
-                let cp = window.contextPath;
-                if (!cp || cp === "undefined") cp = "";
-
+                let cp = window.contextPath || "";
                 const currentPath = window.location.pathname;
                 const currentSearch = window.location.search;
 
@@ -110,12 +161,7 @@ function initLangDropdown() {
                     "/changeLang?lang=" + langValue +
                     "&referer=" + encodeURIComponent(currentPath + currentSearch);
 
-                // [디버깅 팁] 콘솔을 확인하기 위해 이동을 0.1초만 지연시켜봅니다.
-                console.log("이동할 최종 URL:", targetUrl);
-
-                setTimeout(() => {
-                    window.location.href = targetUrl;
-                }, 100);
+                setTimeout(() => { window.location.href = targetUrl; }, 100);
             }
         };
     }

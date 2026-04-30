@@ -1,7 +1,7 @@
 package com.test.Controller;
 
-import com.test.DAO.AuthDAO;
-import com.test.Model.AuthDTO;
+import com.test.dao.AuthDAO;
+import com.test.model.AuthDTO;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

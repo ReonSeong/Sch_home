@@ -5,7 +5,7 @@
   Time: 오후 5:12
 */
 
-package com.test.Util;
+package com.test.util;
 
 import java.sql.Connection;
 import javax.naming.Context;

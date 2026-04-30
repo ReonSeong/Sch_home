@@ -5,9 +5,9 @@
   Time: 오후 5:21
 */
 
-package com.test.DAO;
+package com.test.dao;
 
-import com.test.Util.DBConnection;
+import com.test.util.DBConnection;
 import java.sql.Connection;
 
 public class BaseDAO {

@@ -1,7 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
 <%-- 다국어 번들이 설정되지 않았을 경우를 대비해 기본 번들 설정 (없으면 생략 가능하지만 에러 방지용) --%>
 <%--<fmt:setBundle basename="messages" var="msg" scope="session"/>--%>
 

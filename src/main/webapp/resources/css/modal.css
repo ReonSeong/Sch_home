@@ -1,75 +1,234 @@
-/* ==========================================
-   모달 공통 (Modal Structure)
-   ========================================== */
+/* ===========================================
+   모달 레이아웃 (modal.css)
+   =========================================== */
+
+/* 모달 배경 오버레이 */
 .modal-overlay {
+    /* 기본적으로 화면에서 숨김 처리 */
+    display: none;
+
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
-    display: flex;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85); /* 조금 더 어둡게 조정 */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    /* 중앙 정렬을 위한 설정 (JS에서 보일 때 display: flex로 변경) */
     justify-content: center;
     align-items: center;
-    z-index: 2000;
+
+    z-index: 11000; /* 헤더(10000)보다 위에 오도록 설정 */
     transition: opacity 0.3s ease;
 }
 
-.modal-content {
-    background: var(--dropdown-bg) !important;
+/* JS로 제어하기 위한 클래스 - 최우선 순위로 숨김 */
+.modal-overlay.hidden {
+    display: none !important;
+}
+
+/* 모달 컨텐츠 박스 (상세보기 모드) */
+.modal-content.detail-mode {
+    background: var(--dropdown-bg);
     border: 1px solid var(--glass-border);
     border-radius: 25px;
     width: 90%;
-    max-width: 500px;
-    padding: 0;
-    overflow: hidden;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    max-width: 850px;
+    padding: 40px;
+    position: relative;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    animation: modalFadeIn 0.3s ease-out; /* 등장 애니메이션 */
 }
 
-.modal-header {
-    padding: 20px 25px;
+/* 등장 애니메이션 */
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 모달 내부 가로 정렬 (이미지 | 정보) */
+.modal-detail-wrapper {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--glass-border);
+    gap: 40px;
+    align-items: flex-start;
 }
 
-.modal-header h3 { font-size: 1.2rem; font-weight: 700; color: var(--text-main); }
-
-.modal-body { padding: 25px; }
-
-.modal-footer {
-    padding: 15px 25px;
-    background: rgba(0,0,0,0.2);
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+/* 좌측 이미지 박스 */
+.detail-img-box {
+    flex: 1;
+    max-width: 350px;
+    min-width: 280px;
 }
 
-.btn-close {
-    background: none; border: none;
-    color: var(--text-sub); font-size: 1.5rem;
-    cursor: pointer; transition: 0.2s;
-}
-.btn-close:hover { color: var(--text-main); }
-
-.hidden { display: none !important; }
-
-/* 글래스모피즘 입력창 스타일 */
-.form-input {
+.detail-img-box img {
     width: 100%;
-    padding: 12px 15px;
-    margin : 15px 0 0 0;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    color: #fff;
-    outline: none;
-    backdrop-filter: blur(5px);
-    transition: all 0.3s ease;
+    border-radius: 15px;
+    border: 1px solid var(--glass-border);
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    background-color: rgba(255, 255, 255, 0.02);
 }
 
-.form-input:focus {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--accent-blue);
-    box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+/* 우측 상세 정보 박스 */
+.detail-info-box {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-info-box h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text-main);
+    letter-spacing: -0.5px;
+}
+
+.detail-price {
+    font-size: 1.5rem;
+    color: var(--accent-blue);
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.detail-ingredients-title {
+    font-size: 1rem;
+    color: var(--text-sub);
+    margin-bottom: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 재료 목록 컨텐츠 영역 */
+.detail-ingredients-content {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    border-radius: 12px;
+    min-height: 120px;
+    line-height: 1.6;
+    color: var(--text-main);
+    font-size: 0.95rem;
+}
+
+/* 닫기 버튼 (우측 상단 절대 위치) */
+.abs-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    background: none;
+    border: none;
+    color: var(--text-sub);
+    font-size: 2.5rem;
+    font-weight: 300;
+    cursor: pointer;
+    line-height: 1;
+    transition: 0.2s;
+    z-index: 10;
+}
+
+.abs-close-btn:hover {
+    color: var(--text-main);
+    transform: rotate(90deg);
+}
+
+/* ===========================================
+   반응형 처리
+   =========================================== */
+@media (max-width: 768px) {
+    .modal-content.detail-mode {
+        padding: 30px 20px;
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto; /* 화면 작을 시 스크롤 */
+    }
+
+    .modal-detail-wrapper {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .detail-img-box {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .detail-info-box {
+        width: 100%;
+        text-align: center;
+    }
+
+    .detail-ingredients-title {
+        justify-content: center;
+    }
+
+    .detail-ingredients-content {
+        text-align: left;
+    }
+}
+/* 재료 테이블 스타일 */
+.ingredients-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.ingredients-table th, .ingredients-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ingredients-table th {
+    color: var(--text-sub);
+    font-weight: 600;
+    width: 60%;
+}
+
+.ingredients-table td {
+    color: var(--text-main);
+    text-align: right; /* 용량은 우측 정렬 */
+}
+
+.glass-form .input-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.glass-form label {
+    font-size: 0.85rem;
+    color: var(--text-sub);
+}
+
+.glass-form input, .glass-form select, .glass-form textarea {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    padding: 10px;
+    color: var(--text-main);
+    outline: none;
+}
+
+.save-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: var(--accent-blue);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.save-btn:hover {
+    filter: brightness(1.2);
 }

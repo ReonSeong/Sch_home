@@ -5,7 +5,7 @@
   Time: 오후 5:10
 */
 
-package com.test.Model;
+package com.test.model;
 
 /**
  * 테이블의 물리적 위치와 상태 정보를 담당하는 데이터 이동 객체 (DTO)

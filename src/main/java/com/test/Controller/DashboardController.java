@@ -1,6 +1,6 @@
 package com.test.Controller;
 
-import com.test.Model.AuthDTO;
+import com.test.model.AuthDTO;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.jsp.jstl.core.Config;
 import org.slf4j.Logger;

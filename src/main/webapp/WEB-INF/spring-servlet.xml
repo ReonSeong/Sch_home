@@ -36,7 +36,7 @@
             <mvc:exclude-mapping path="/auth/**"/>    <!-- 로그인 처리 로직(POST) 경로 필수 제외 -->
             <mvc:exclude-mapping path="/resources/**" />
             <mvc:exclude-mapping path="/changeLang"/> <!-- 언어 설정 -->
-            <bean class="com.test.Interceptor.LoginInterceptor"/>
+            <bean class="com.test.interceptor.LoginInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>
 

@@ -7,9 +7,9 @@
 
 package com.test.Controller;
 
-import com.test.DAO.TableDAO;
-import com.test.Model.AuthDTO;
-import com.test.Model.TableDTO;
+import com.test.dao.TableDAO;
+import com.test.model.AuthDTO;
+import com.test.model.TableDTO;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

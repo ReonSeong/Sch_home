@@ -5,12 +5,12 @@
   Time: 오후 5:17
 */
 
-package com.test.DAO;
+package com.test.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import com.test.Model.AuthDTO;
+import com.test.model.AuthDTO;
 
 // 여기에 extends BaseDAO를 추가해서 getConnection()을 상속받습니다!
 public class AuthDAO extends BaseDAO {

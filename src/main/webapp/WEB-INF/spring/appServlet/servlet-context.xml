@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- DispatcherServlet Context: 웹 관련 빈 설정 -->
+
+    <!-- @Controller 어노테이션 활성화 -->
+    <annotation-driven />
+
+    <!-- 정적 리소스(이미지, CSS, JS) 경로 설정 -->
+    <resources mapping="/resources/**" location="/resources/" />
+
+    <!-- JSP 뷰 리졸버 설정: 컨트롤러에서 리턴하는 문자열 앞뒤에 경로와 확장자를 붙여줌 -->
+    <beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <beans:property name="prefix" value="/WEB-INF/views/" />
+        <beans:property name="suffix" value=".jsp" />
+    </beans:bean>
+
+    <!-- [핵심] 컨트롤러가 위치한 패키지를 스캔하도록 설정 -->
+    <context:component-scan base-package="com.test" />
+
+</beans:beans>

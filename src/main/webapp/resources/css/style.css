@@ -186,3 +186,6 @@ input:checked + .slider .icon-moon { opacity: 1; transform: translateY(-50%) sca
     .com-name { font-size: 0.9rem; }
     .lang-selected { padding: 6px 10px; }
 }
+.hidden {
+    display: none !important;
+}

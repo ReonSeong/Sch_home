@@ -1,6 +1,6 @@
-package com.test.DAO;
+package com.test.dao;
 
-import com.test.Model.TableDTO;
+import com.test.model.TableDTO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
