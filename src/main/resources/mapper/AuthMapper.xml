@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.test.dao.AuthDAO">
+
+    <!-- 로그인 체크 쿼리 -->
+    <select id="loginCheck" resultType="com.test.model.AuthDTO">
+        SELECT
+            idx,
+            user_id     AS userId,
+            user_pw     AS userPw,
+            user_name   AS userName,
+            shop_name   AS shopName,
+            shop_code   AS shopCode,
+            nation,
+            address,
+            role,
+            mgr_level   AS mgrLevel,
+            phone,
+            reg_date    AS regDate,
+            last_login  AS lastLogin
+        FROM MST_USER
+        WHERE user_id = #{userId}
+          AND user_pw = #{userPw}
+    </select>
+
+    <!-- 마지막 로그인 시간 업데이트 -->
+    <update id="updateLastLogin">
+        UPDATE MST_USER
+        SET last_login = NOW()
+        WHERE user_id = #{userId}
+    </update>
+
+</mapper>

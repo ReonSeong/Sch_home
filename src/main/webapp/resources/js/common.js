@@ -1,84 +1,73 @@
 /**
- * Updated: 2026-04-10
- * Description: Theme, Mobile Menu, Language Dropdown + File Upload 통합 관리
+ * File Name : Common.js
+ * Writer : ReonQ
+ * Updated Date     Version     User        Log
+ * 2026-04-17           0.1                 First make
+ * 2026-05-01           0.2                 Unify JS
+ * 2026-05-01           0.3     ReonQ       Add Global Error Modal Logic
+ *
+ * Now Version : 0.3
+ *
+ * Description:
+ * UI(테마, 드롭다운, 모달), 다국어(i18n), 파일 업로드 통합 관리
  */
 
+window.i18n = {};
+
 document.addEventListener('DOMContentLoaded', () => {
+    initI18n();
     initTheme();
     initMobileDropdown();
     initLangDropdown();
 });
 
 /* ===========================================
-   1. 공통 파일 업로드 및 미리보기 로직
+   0. 다국어(i18n) 및 공통 UI 제어
    =========================================== */
 
-/**
- * 공통 파일 업로드 함수 (AJAX - FormData 활용)
- * @param {String} formId - 폼 선택자 (예: '#addMenuForm')
- * @param {String} url - 서버 엔드포인트 URL
- * @param {Object} extraData - 추가로 전송할 파라미터 객체
- * @param {Function} callback - 성공 시 실행할 콜백 함수
- */
-function commonFileUpload(formId, url, extraData, callback) {
-    const form = document.querySelector(formId);
-    if (!form) return;
-
-    const formData = new FormData(form);
-
-    // 추가 데이터(category, regUser 등) 바인딩
-    if (extraData) {
-        Object.keys(extraData).forEach(key => {
-            formData.append(key, extraData[key]);
-        });
+function initI18n() {
+    if (window.i18nData) {
+        window.i18n = window.i18nData;
     }
-
-    // jQuery가 포함되어 있다면 $.ajax 사용 (가독성 및 기존 코드 호환성)
-    $.ajax({
-        url: url,
-        type: "POST",
-        processData: false, // 파일 전송 시 필수
-        contentType: false, // 파일 전송 시 필수
-        data: formData,
-        success: (res) => {
-            if (typeof callback === "function") callback(res);
-        },
-        error: (err) => {
-            console.error("Upload Error:", err);
-            alert("업로드 중 오류가 발생했습니다.");
-        }
-    });
 }
 
 /**
- * 이미지 미리보기 공통 함수
- * @param {HTMLInputElement} input - 파일 인풋 엘리먼트
- * @param {String} previewId - 이미지를 보여줄 img 태그 ID (예: '#imagePreview')
- * @param {String} placeholderId - 업로드 아이콘 등 가릴 박스 ID (예: '#uploadPlaceholder')
+ * 공통 모달 열기 (CSS active 클래스 대응 추가)
  */
-function handleImagePreview(input, previewId, placeholderId) {
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = document.querySelector(previewId);
-            const placeholder = document.querySelector(placeholderId);
-
-            if(preview) {
-                preview.src = e.target.result;
-                preview.classList.remove('hidden');
-                preview.style.display = 'block';
-            }
-            if(placeholder) {
-                placeholder.classList.add('hidden');
-                placeholder.style.display = 'none';
-            }
-        }
-        reader.readAsDataURL(input.files[0]);
+function openModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.remove('hidden');
+        // modal.css의 display: flex 대응을 위해 active 추가
+        setTimeout(() => modal.classList.add('active'), 10);
     }
+}
+
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.remove('active');
+        modal.classList.add('hidden');
+    }
+}
+
+/**
+ * 전역 에러 알림 모달 호출 함수
+ * @param {String} title - 에러 제목 (생략 시 기본값)
+ * @param {String} message - 에러 상세 내용
+ */
+function showError(title, message) {
+    const errorTitle = document.getElementById('errorTitle');
+    const errorDetail = document.getElementById('errorDetail');
+
+    if (errorTitle) errorTitle.innerText = title || (window.i18n.errorDefaultTitle || "Error");
+    if (errorDetail) errorDetail.innerText = message || (window.i18n.errorDefaultMessage || "An unexpected error occurred.");
+
+    openModal('errorModal');
 }
 
 /* ===========================================
-   2. 기존 UI 로직 (Theme, Dropdowns)
+   1. 테마 및 드롭다운 로직
    =========================================== */
 
 function initTheme() {
@@ -121,15 +110,6 @@ function initMobileDropdown() {
             if (val) location.href = val;
         };
     });
-
-    const currentPath = window.location.pathname;
-    options.forEach(opt => {
-        const val = opt.getAttribute('data-value');
-        if (val && currentPath.includes(val)) {
-            selectedText.textContent = opt.textContent;
-            opt.classList.add('active');
-        }
-    });
 }
 
 function initLangDropdown() {
@@ -149,24 +129,60 @@ function initLangDropdown() {
         optionsArea.onclick = (e) => {
             const opt = e.target.closest('.lang-opt');
             if (!opt) return;
-
             const langValue = opt.dataset.value;
             if (langValue) {
                 localStorage.setItem('preferredLang', langValue);
-                let cp = window.contextPath || "";
-                const currentPath = window.location.pathname;
-                const currentSearch = window.location.search;
-
-                const targetUrl = (cp.endsWith('/') ? cp.slice(0, -1) : cp) +
-                    "/changeLang?lang=" + langValue +
-                    "&referer=" + encodeURIComponent(currentPath + currentSearch);
-
-                setTimeout(() => { window.location.href = targetUrl; }, 100);
+                const cp = window.contextPath || "";
+                location.href = cp + "/changeLang?lang=" + langValue;
             }
         };
     }
+    document.addEventListener('click', () => langDropdown.classList.remove('active'));
+}
 
-    document.addEventListener('click', () => {
-        langDropdown.classList.remove('active');
+/* ===========================================
+   2. 공통 파일 업로드 및 미리보기
+   =========================================== */
+
+function commonFileUpload(formId, url, extraData, callback) {
+    const form = document.querySelector(formId);
+    if (!form) return;
+
+    const formData = new FormData(form);
+    if (extraData) {
+        Object.keys(extraData).forEach(key => formData.append(key, extraData[key]));
+    }
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        processData: false,
+        contentType: false,
+        data: formData,
+        success: (res) => { if (typeof callback === "function") callback(res); },
+        error: (err) => {
+            console.error("Upload Error:", err);
+            showError(window.i18n.alertErrorTitle, window.i18n.alertError || "File upload failed.");
+        }
     });
+}
+
+function handleImagePreview(input, previewId, placeholderId) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.querySelector(previewId);
+            const placeholder = document.querySelector(placeholderId);
+            if(preview) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                preview.style.display = 'block';
+            }
+            if(placeholder) {
+                placeholder.classList.add('hidden');
+                placeholder.style.display = 'none';
+            }
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
 }

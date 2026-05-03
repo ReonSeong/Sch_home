@@ -1,32 +1,39 @@
 package com.test.util;
 
-import com.sksamuel.scrimage.ImmutableImage;
-import com.sksamuel.scrimage.webp.WebpWriter; // 드디어 정상 임포트!
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.UUID;
+import java.util.Arrays;
+import java.util.List;
 
 public class FileUpload {
 
-    public static String saveAsWebp(MultipartFile file, String uploadDir) throws IOException {
+    // 허용할 확장자 리스트
+    private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "gif");
+
+    public static String saveFile(MultipartFile file, String uploadDir) throws IOException {
         if (file == null || file.isEmpty()) return null;
 
-        // 저장 폴더 생성
+        // 1. 확장자 추출 및 검사
+        String originalName = file.getOriginalFilename();
+        String ext = originalName.substring(originalName.lastIndexOf(".") + 1).toLowerCase();
+
+        if (!ALLOWED_EXTENSIONS.contains(ext)) {
+            throw new IllegalArgumentException("허용되지 않는 파일 형식입니다. (jpg, png, gif만 가능)");
+        }
+
+        // 2. 저장 폴더 생성
         File dir = new File(uploadDir);
         if (!dir.exists()) dir.mkdirs();
 
-        // 파일명 생성 (UUID.webp)
-        String fileName = UUID.randomUUID().toString() + ".webp";
-        File destination = new File(Paths.get(uploadDir, fileName).toString());
+        // 3. 고유한 파일명 생성 (UUID)
+        String savedFileName = UUID.randomUUID().toString() + "." + ext;
+        File destination = new File(uploadDir, savedFileName);
 
-        // Scrimage를 이용한 WebP 변환 저장
-        // DEFAULT는 품질 80의 무손실에 가까운 압축을 제공합니다.
-        ImmutableImage.loader()
-                .fromStream(file.getInputStream())
-                .output(WebpWriter.DEFAULT, destination);
+        // 4. 표준 방식으로 파일 물리적 저장
+        file.transferTo(destination);
 
-        return fileName;
+        return savedFileName;
     }
 }

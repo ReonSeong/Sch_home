@@ -16,7 +16,6 @@ import java.util.List;
 
 
 @Mapper
-@Repository
 public interface MenuDAO {
 
     // 1. 카테고리별 메뉴 리스트 조회 (MST만 조회하여 가볍게)

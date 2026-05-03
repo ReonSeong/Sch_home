@@ -7,14 +7,6 @@
     min-height: 100vh;
     background-color: var(--bg-color);
 }
-
-.main-content {
-    flex: 1;
-    margin-left: 260px; /* sidebar width */
-    padding: 50px 40px;
-    min-width: 0;
-}
-
 /* ==========================================
    콘텐츠 헤더 (Content Header)
    ========================================== */

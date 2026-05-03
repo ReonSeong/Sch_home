@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.test.dao.TableDAO">
+<!--
+    File Name : TableMapper.xml
+    Writer : ReonQ
+    Updated Date     Version     User        Change log
+    2026-04-19           0.1     ReonQ       First make
+    2026-05-01           0.2     ReonQ       Cange to @data , Add att
+    Now Version : 0.2
+    Description:
+    TableMapper.xml
+-->
+    <!-- 1. 매장별 테이블 리스트 조회 -->
+    <select id="getTableList" resultType="com.test.model.TableDTO">
+        SELECT
+            TABLE_IDX   AS tableIdx,
+            SHOP_CODE   AS shopCode,
+            TABLE_NAME  AS tableName,
+            POS_X       AS posX,
+            POS_Y       AS posY,
+            STATUS      AS status,
+            ATT_1       AS att1,
+            ATT_2       AS att2,
+            ATT_3       AS att3
+        FROM MST_TABLE_LAYOUT
+        WHERE SHOP_CODE = #{shopCode}
+        ORDER BY TABLE_IDX ASC
+    </select>
+
+    <!-- 2. 매장별 테이블 전체 삭제 -->
+    <delete id="deleteTablesByShop">
+        DELETE FROM MST_TABLE_LAYOUT
+        WHERE SHOP_CODE = #{shopCode}
+    </delete>
+
+    <!-- 3. 테이블 추가 (신규 컬럼 포함) -->
+    <insert id="insertTable" parameterType="com.test.model.TableDTO">
+        INSERT INTO MST_TABLE_LAYOUT (
+            SHOP_CODE,
+            TABLE_NAME,
+            POS_X,
+            POS_Y,
+            STATUS,
+            ATT_1,
+            ATT_2,
+            ATT_3
+        ) VALUES (
+                     #{shopCode},
+                     #{tableName},
+                     #{posX},
+                     #{posY},
+                     COALESCE(#{status}, 'EMPTY'),
+                     #{att1},
+                     #{att2},
+                     #{att3}
+                 )
+    </insert>
+
+    <!-- 4. 단일 테이블 삭제 -->
+    <delete id="deleteTable">
+        DELETE FROM MST_TABLE_LAYOUT
+        WHERE TABLE_IDX = #{tableIdx}
+          AND SHOP_CODE = #{shopCode}
+    </delete>
+
+</mapper>

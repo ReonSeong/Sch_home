@@ -9,51 +9,42 @@ package com.test.Controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.servlet.LocaleResolver; // 인터페이스 임포트
 
-import java.io.IOException;
 import java.util.Locale;
 
-@Controller // 1. 컨트롤러 선언
+@Controller
 public class LanguageController {
 
-    private static final Logger logger = LoggerFactory.getLogger(LanguageController.class);
+    // XML에 등록한 localeResolver 빈을 직접 주입받습니다.
+    @Autowired
+    private LocaleResolver localeResolver;
 
-    // 2. @GetMapping으로 변경 및 파라미터 자동 주입
     @GetMapping("/changeLang")
-    public void changeLang(@RequestParam(value = "lang", required = false) String lang,
-                           @RequestParam(value = "referer", required = false) String referer,
-                           HttpServletRequest request,
-                           HttpServletResponse response) throws IOException {
+    public String changeLang(@RequestParam("lang") String lang,
+                             HttpServletRequest request,
+                             HttpServletResponse response) {
 
-        if (lang != null && !lang.isEmpty()) {
-            // 1. 세션에 명시적으로 언어 코드 저장
-            request.getSession().setAttribute("currentLang", lang);
-
-            // 2. LocaleResolver를 통해 스프링 엔진의 언어 설정 변경
-            Locale locale = new Locale(lang);
-            LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
-            if (localeResolver != null) {
-                // XML에 SessionLocaleResolver를 등록했으므로 이제 에러가 나지 않습니다.
-                localeResolver.setLocale(request, response, locale);
-            }
+        // 1. 지원 언어 체크 (보안 및 에러 방지)
+        String targetLang = lang.toLowerCase();
+        if (!targetLang.equals("ko") && !targetLang.equals("sr") && !targetLang.equals("en")) {
+            targetLang = "en";
         }
 
-        // 3. 리다이렉트 경로 결정 (루프 방지)
-        String targetPath = (referer == null || referer.isEmpty() || referer.contains("/changeLang")) ? "/" : referer;
+        Locale locale = new Locale(targetLang);
 
-        // ContextPath 중복 방지 로직
-        String cp = request.getContextPath();
-        if (!targetPath.startsWith("http") && !targetPath.startsWith(cp)) {
-            targetPath = cp + (targetPath.startsWith("/") ? "" : "/") + targetPath;
-        }
+        // 2. 중요: 주입받은 localeResolver를 직접 사용하여 세션에 저장
+        // 이 코드가 실행될 때 더 이상 Accept-Language 헤더를 건드리지 않습니다.
+        localeResolver.setLocale(request, response, locale);
 
-        response.sendRedirect(targetPath);
+        // 3. UI 표시용 세션 값 동기화
+        request.getSession().setAttribute("currentLang", targetLang);
+
+        String referer = request.getHeader("Referer");
+        return "redirect:" + (referer != null ? referer : "/dashboard");
     }
 }

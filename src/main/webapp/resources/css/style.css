@@ -1,3 +1,16 @@
+/* ===========================================
+    File Name : style.css
+    Writer : ReonQ
+    Updated Date     Version     User        Change log
+    2026-04-17           0.1     ReonQ       First make
+    2026-05-01           0.2     ReonQ       Fix Main-content area
+
+    Now Version : 0.1
+
+    Description:
+    General Modal Design
+  =========================================== */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 /* --- 1. 디자인 시스템 변수 --- */
@@ -12,7 +25,6 @@
     --accent-blue: #3498db;
     --accent-yellow: #f1c40f;
     --header-bg: rgba(5, 5, 5, 0.8);
-    /* [수정] 드롭다운 전용 솔리드 배경 (다크) */
     --dropdown-bg: #1a1a1a;
     --transition-speed: 0.5s;
 }
@@ -26,7 +38,6 @@ body.light-mode {
     --input-bg: rgba(255, 255, 255, 0.9);
     --input-border: rgba(0, 0, 0, 0.1);
     --header-bg: rgba(248, 249, 250, 0.8);
-    /* [수정] 드롭다운 전용 솔리드 배경 (라이트) */
     --dropdown-bg: #ffffff;
 }
 
@@ -34,6 +45,27 @@ body.light-mode {
 * {
     margin: 0; padding: 0; box-sizing: border-box;
     font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex; /* 사이드바와의 배치를 위해 추가 */
+}
+
+/* 사이드바가 있는 경우 본문 영역이 헤더와 사이드바에 가려지지 않게 설정 */
+.main-content {
+    flex: 1;
+    margin-top: 3%; /* 헤더 높이만큼 여백 */
+    /*margin-top: 70px; !* 헤더 높이만큼 여백 *!*/
+    margin-left: 260px;
+    padding: 30px;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+    .main-content { margin-left: 0; } /* 모바일/태블릿에선 사이드바가 숨겨지므로 여백 제거 */
 }
 
 body {
@@ -54,7 +86,6 @@ body {
     backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
     border-bottom: 1px solid var(--glass-border);
     z-index: 10000;
-    transition: background var(--transition-speed) ease, border-color var(--transition-speed) ease;
 }
 
 .header-left .com-name {
@@ -66,7 +97,7 @@ body {
     display: flex; align-items: center; gap: 18px;
 }
 
-/* --- 4. 언어 선택 드롭다운 (순서 1) --- */
+/* --- 4. 언어 선택 드롭다운 (JS active 클래스 기반) --- */
 .lang-dropdown-wrapper {
     position: relative;
     cursor: pointer;
@@ -81,32 +112,44 @@ body {
     border: 1px solid var(--glass-border);
     border-radius: 50px;
     font-size: 0.8rem; font-weight: 600; color: var(--text-main);
-    transition: background 0.3s;
+    transition: 0.3s;
 }
 
 .lang-selected:hover { background: rgba(255, 255, 255, 0.08); }
-.lang-selected i.fa-globe { color: var(--accent-blue); font-size: 0.9rem; }
-.arrow-small { font-size: 0.7rem; opacity: 0.6; transition: transform 0.3s ease; }
+.lang-selected i.fa-globe { color: var(--accent-blue); }
 
-/* [수정] 언어 옵션 리스트 - 투명도 제거 */
+.arrow-small {
+    font-size: 0.7rem;
+    opacity: 0.6;
+    transition: transform 0.3s ease;
+}
+
+/* 드롭다운 옵션 기본 상태: 숨김 */
 .lang-options {
     position: absolute;
     top: calc(100% + 10px);
     right: 0;
     min-width: 130px;
-    /* 배경색 투명도 없이 설정 */
     background: var(--dropdown-bg) !important;
     border: 1px solid var(--glass-border);
     border-radius: 12px;
-    display: none;
+    display: none; /* 기본 숨김 */
     flex-direction: column;
     overflow: hidden;
     z-index: 10002;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* 그림자를 진하게 하여 입체감 부여 */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-.lang-dropdown-wrapper.active .lang-options { display: flex; animation: fadeDown 0.3s ease; }
-.lang-dropdown-wrapper.active .arrow-small { transform: rotate(180deg); }
+/* active 클래스가 붙었을 때만 활성화 */
+.lang-dropdown-wrapper.active .lang-options {
+    display: flex !important;
+    animation: fadeDown 0.3s ease forwards;
+}
+
+/* active 상태에서 화살표 회전 */
+.lang-dropdown-wrapper.active .arrow-small {
+    transform: rotate(180deg);
+}
 
 .lang-opt {
     padding: 12px 18px;
@@ -116,36 +159,40 @@ body {
     transition: 0.2s;
     border-bottom: 1px solid var(--glass-border);
 }
+
 .lang-opt:last-child { border-bottom: none; }
 .lang-opt:hover {
-    background: rgba(52, 152, 219, 0.15);
+    background: rgba(52, 152, 219, 0.1);
     color: var(--text-main);
 }
 
-/* --- 5. 테마 슬라이더 (순서 2) --- */
+/* --- 5. 테마 슬라이더 --- */
 .theme-switch-wrapper { display: flex; align-items: center; }
 .theme-switch { display: inline-block; height: 32px; position: relative; width: 68px; }
 .theme-switch input { display: none; }
+
 .slider {
     background-color: var(--input-bg); position: absolute; top: 0; left: 0; right: 0; bottom: 0;
     cursor: pointer; border-radius: 30px; border: 1px solid var(--glass-border);
     transition: var(--transition-speed); z-index: 1;
 }
+
 .slider:before {
     background-color: var(--text-main); content: ""; height: 24px; width: 24px;
     left: 3px; bottom: 3px; position: absolute; border-radius: 50%;
     transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 5;
 }
+
 input:checked + .slider:before { transform: translateX(36px); }
 
-.slider i { position: absolute; top: 50%; transform: translateY(-50%) scale(1); font-size: 14px; transition: 0.4s; z-index: 6; }
-.icon-sun { left: 8px; color: #ffb800; opacity: 1; }
-.icon-moon { left: 8px; color: #f1c40f; opacity: 0; transform: translateY(-50%) scale(0); }
+.slider i { position: absolute; top: 50%; transform: translateY(-50%); font-size: 14px; transition: 0.4s; z-index: 6; }
+.icon-sun { left: 8px; color: #ffb800; }
+.icon-moon { right: 8px; color: #f1c40f; opacity: 0; }
 
-input:checked + .slider .icon-sun { opacity: 0; transform: translateY(-50%) scale(0) translateX(36px); }
-input:checked + .slider .icon-moon { opacity: 1; transform: translateY(-50%) scale(1) translateX(36px); }
+input:checked + .slider .icon-moon { opacity: 1; }
+input:checked + .slider .icon-sun { opacity: 0; }
 
-/* --- 6. 로그아웃 (순서 3) --- */
+/* --- 6. 로그아웃 버튼 --- */
 .logout-container {
     padding-left: 18px;
     border-left: 1px solid var(--glass-border);
@@ -154,38 +201,21 @@ input:checked + .slider .icon-moon { opacity: 1; transform: translateY(-50%) sca
 
 .btn-logout-head {
     color: var(--text-sub); font-size: 1.1rem; cursor: pointer;
-    transition: 0.3s; text-decoration: none; display: flex; align-items: center;
+    transition: 0.3s; text-decoration: none;
 }
 .btn-logout-head:hover { color: #ff4757; transform: scale(1.1); }
 
-/* --- 7. 배경 효과 및 애니메이션 --- */
-.background-blobs .blob1, .background-blobs .blob2 {
-    position: fixed; width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(52, 152, 219, 0.08) 0%, rgba(0,0,0,0) 70%);
-    border-radius: 50%; z-index: -1; filter: blur(80px); pointer-events: none;
-}
-.blob1 { top: -100px; left: -100px; }
-.blob2 { bottom: -100px; right: -100px; }
-
-.glass {
-    background: var(--glass-bg);
-    backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-    border: 1px solid var(--glass-border);
-    transition: background var(--transition-speed) ease, border-color var(--transition-speed) ease;
-}
-
+/* --- 7. 애니메이션 --- */
 @keyframes fadeDown {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- 8. 모바일 반응형 보정 --- */
+.hidden { display: none !important; }
+
+/* --- 8. 반응형 --- */
 @media (max-width: 768px) {
     .main-header { padding: 0 15px; }
     .header-right { gap: 12px; }
     .com-name { font-size: 0.9rem; }
-    .lang-selected { padding: 6px 10px; }
-}
-.hidden {
-    display: none !important;
 }

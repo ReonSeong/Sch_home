@@ -1,0 +1,47 @@
+/* ===========================================
+    File Name : error.css
+    Writer : ReonQ
+    Updated Date     Version     User        Change log
+    2026-05-01           0.1     ReonQ       First make
+
+    Now Version : 0.1
+
+    Description:
+    General error page Design
+  =========================================== */
+.error-page-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-main);
+}
+
+.error-card {
+    padding: 60px;
+    text-align: center;
+    border-radius: 30px;
+    max-width: 500px;
+    width: 90%;
+}
+
+.error-code {
+    font-size: 8rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #3498db, #2ecc71);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 20px;
+}
+
+.error-text-main {
+    font-size: 1.5rem;
+    color: var(--text-main);
+    margin-bottom: 15px;
+}
+
+.error-text-sub {
+    color: var(--text-sub);
+    margin-bottom: 30px;
+    line-height: 1.6;
+}

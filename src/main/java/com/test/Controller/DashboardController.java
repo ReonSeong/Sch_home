@@ -1,50 +1,41 @@
 package com.test.Controller;
 
 import com.test.model.AuthDTO;
+import com.test.service.DashboardService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.jsp.jstl.core.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.Locale;
 
 @Controller
 public class DashboardController {
 
     private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
 
+    @Autowired
+    private DashboardService dashboardService;
+
+    /**
+     * 대시보드 메인
+     * 세션 체크 및 다국어 설정은 LoginInterceptor에서 전담합니다.
+     */
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
-        logger.info("======= [START] Dashboard Controller =======");
+        logger.info("======= [DASHBOARD] 진입 =======");
 
-        // 1. 세션에서 유저 정보 가져오기
+        // 1. 필요한 데이터 추출 (인터셉터를 통과했으므로 user는 무조건 존재함)
         AuthDTO sessionUser = (AuthDTO) session.getAttribute("user");
 
-        // 유저 정보가 없으면 루트(/)로 리다이렉트
-        if (sessionUser == null) {
-            logger.warn("[AUTH] No session user found! Redirecting to Login");
-            return "redirect:/";
-        }
+        // 2. 대시보드 전용 데이터 준비 (Service 호출)
+        dashboardService.prepareDashboardData(sessionUser);
 
-        // 2. 다국어 설정 로직 (기존 JSTL 설정 방식 유지)
-        String lang = (String) session.getAttribute("lang");
-        if (lang != null && !lang.isEmpty()) {
-            Config.set(session, Config.FMT_LOCALE, new Locale(lang));
-        } else {
-            Config.set(session, Config.FMT_LOCALE, Locale.KOREAN);
-        }
-
-        // 3. 데이터를 Model에 담아 JSP로 전달
-        // 기존 request.setAttribute("userInfo", sessionUser)와 동일한 역할입니다.
+        // 3. View에 데이터 전달
         model.addAttribute("userInfo", sessionUser);
 
-        logger.info("[FORWARD] Forwarding to dashboard view");
-        logger.info("======= [END] Dashboard Controller =======");
-
-        // 4. JSP 파일명 반환
+        logger.info("[DASHBOARD] 사용자 {} 화면 이동", sessionUser.getUserId());
         return "dashboard";
     }
 }

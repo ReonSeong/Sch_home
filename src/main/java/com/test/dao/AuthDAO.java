@@ -7,43 +7,16 @@
 
 package com.test.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import com.test.model.AuthDTO;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
-// 여기에 extends BaseDAO를 추가해서 getConnection()을 상속받습니다!
-public class AuthDAO extends BaseDAO {
+@Mapper
+public interface AuthDAO {
 
-    public AuthDTO loginCheck(String id, String pw) {
-        AuthDTO user = null;
-        String sql = "SELECT * FROM MST_USER WHERE USER_ID = ? AND USER_PW = ?";
+    // 로그인 체크 (ID, PW 일치 확인)
+    AuthDTO loginCheck(@Param("userId") String userId, @Param("userPw") String userPw);
 
-        // 이제 아래의 getConnection() 호출이 에러 없이 작동합니다.
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, id);
-            pstmt.setString(2, pw);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    user = new AuthDTO();
-                    user.setIdx(rs.getInt("IDX"));
-                    user.setUserId(rs.getString("USER_ID"));
-                    user.setUserName(rs.getString("USER_NAME"));
-                    user.setShopName(rs.getString("SHOP_NAME"));
-                    user.setShopCode(rs.getString("SHOP_CODE"));
-                    user.setNation(rs.getString("NATION"));
-                    user.setAddress(rs.getString("ADDRESS"));
-                    user.setRole(rs.getString("ROLE"));
-                    user.setMgrLevel(rs.getInt("MGR_LEVEL"));
-                    user.setPhone(rs.getString("PHONE"));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return user;
-    }
+    // 로그인 성공 시 lastLogin 시간 업데이트
+    int updateLastLogin(@Param("userId") String userId);
 }

@@ -1,234 +1,190 @@
-/* ===========================================
-   모달 레이아웃 (modal.css)
-   =========================================== */
-
-/* 모달 배경 오버레이 */
+/**
+ *  File Name : modal.css
+ *  Updated Date     Version     User        Log
+ *  2026-05-01           0.1     ReonQ       Published
+ *  2026-05-01           0.2     ReonQ       Add order_add css(.menu-grid)
+ *
+ *  Now Version : 0.1
+ *
+ *  Description:
+ *  General Modal Design
+ *
+ */
 .modal-overlay {
-    /* 기본적으로 화면에서 숨김 처리 */
     display: none;
-
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85); /* 조금 더 어둡게 조정 */
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-
-    /* 중앙 정렬을 위한 설정 (JS에서 보일 때 display: flex로 변경) */
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     justify-content: center;
     align-items: center;
-
-    z-index: 11000; /* 헤더(10000)보다 위에 오도록 설정 */
-    transition: opacity 0.3s ease;
+    z-index: 11000;
 }
 
-/* JS로 제어하기 위한 클래스 - 최우선 순위로 숨김 */
-.modal-overlay.hidden {
-    display: none !important;
-}
+.modal-overlay.active { display: flex !important; }
 
-/* 모달 컨텐츠 박스 (상세보기 모드) */
-.modal-content.detail-mode {
+.modal-content {
     background: var(--dropdown-bg);
     border: 1px solid var(--glass-border);
-    border-radius: 25px;
-    width: 90%;
-    max-width: 850px;
-    padding: 40px;
-    position: relative;
+    border-radius: 30px;
+    position: relative; /* X 버튼의 기준점 */
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-    animation: modalFadeIn 0.3s ease-out; /* 등장 애니메이션 */
-}
-
-/* 등장 애니메이션 */
-@keyframes modalFadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* 모달 내부 가로 정렬 (이미지 | 정보) */
-.modal-detail-wrapper {
-    display: flex;
-    gap: 40px;
-    align-items: flex-start;
-}
-
-/* 좌측 이미지 박스 */
-.detail-img-box {
-    flex: 1;
-    max-width: 350px;
-    min-width: 280px;
-}
-
-.detail-img-box img {
-    width: 100%;
-    border-radius: 15px;
-    border: 1px solid var(--glass-border);
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    background-color: rgba(255, 255, 255, 0.02);
-}
-
-/* 우측 상세 정보 박스 */
-.detail-info-box {
-    flex: 1.2;
+    animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 
-.detail-info-box h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-    color: var(--text-main);
-    letter-spacing: -0.5px;
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.detail-price {
-    font-size: 1.5rem;
-    color: var(--accent-blue);
-    font-weight: 700;
-    margin-bottom: 25px;
-}
-
-.detail-ingredients-title {
-    font-size: 1rem;
+/* ===========================================
+   [X 버튼] 우측 상단 닫기 디자인
+   =========================================== */
+.modal-close-x {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
     color: var(--text-sub);
-    margin-bottom: 12px;
-    font-weight: 600;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
 }
 
-/* 재료 목록 컨텐츠 영역 */
-.detail-ingredients-content {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 20px;
-    border-radius: 12px;
-    min-height: 120px;
-    line-height: 1.6;
+.modal-close-x:hover {
+    background: rgba(231, 76, 60, 0.2);
+    color: #ff7675;
+    border-color: rgba(231, 76, 60, 0.4);
+    transform: rotate(90deg);
+}
+
+/* 모달 크기 */
+.modal-content.detail-mode, .modal-content.glass { width: 95%; max-width: 700px; min-height: 400px; }
+.modal-content.table-mode { width: 90%; max-width: 450px; }
+.modal-content.menu-mode { max-width: 850px; }
+
+/* Header & Body */
+.modal-header { padding: 30px 40px 20px 40px; border-bottom: 1px solid var(--glass-border); }
+.modal-header h3 { font-size: 1.4rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 15px; margin: 0; }
+
+.modal-body { padding: 20px 40px; flex: 1; overflow-y: auto; }
+
+/* ===========================================
+   [주문 테이블] 상세 내역 스타일
+   =========================================== */
+.order-item-list { width: 100%; border-spacing: 0 10px; border-collapse: separate; table-layout: fixed; }
+.order-item-list th { color: var(--text-sub); font-size: 0.85rem; padding: 0 10px; text-transform: uppercase; }
+.order-item-list th:nth-child(1), .order-item-list td:nth-child(1) { width: 50%; text-align: left; }
+.order-item-list th:nth-child(2), .order-item-list td:nth-child(2) { width: 20%; text-align: center; }
+.order-item-list th:nth-child(3), .order-item-list td:nth-child(3) { width: 30%; text-align: right; }
+
+.order-item-list td {
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-top: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border);
     color: var(--text-main);
     font-size: 0.95rem;
 }
 
-/* 닫기 버튼 (우측 상단 절대 위치) */
-.abs-close-btn {
-    position: absolute;
-    top: 20px;
-    right: 25px;
-    background: none;
-    border: none;
-    color: var(--text-sub);
-    font-size: 2.5rem;
-    font-weight: 300;
-    cursor: pointer;
-    line-height: 1;
-    transition: 0.2s;
-    z-index: 10;
-}
+.order-item-list td:first-child { border-left: 1px solid var(--glass-border); border-radius: 12px 0 0 12px; }
+.order-item-list td:last-child { border-right: 1px solid var(--glass-border); border-radius: 0 12px 12px 0; color: var(--accent-yellow); font-weight: 700; }
 
-.abs-close-btn:hover {
-    color: var(--text-main);
-    transform: rotate(90deg);
+.total-price-area {
+    margin-top: 20px; padding: 20px 25px;
+    background: rgba(52, 152, 219, 0.08);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    border-radius: 20px;
+    display: flex; justify-content: space-between; align-items: center;
 }
+.total-price-area .label { color: var(--text-sub); font-weight: 600; }
+.total-price-area .amount { font-size: 1.4rem; font-weight: 800; color: var(--text-main); }
 
 /* ===========================================
-   반응형 처리
+   [버튼 테마] 주문추가, 결제하기
    =========================================== */
-@media (max-width: 768px) {
-    .modal-content.detail-mode {
-        padding: 30px 20px;
-        width: 95%;
-        max-height: 90vh;
-        overflow-y: auto; /* 화면 작을 시 스크롤 */
-    }
+.modal-footer { padding: 10px 40px 35px 40px; display: flex; gap: 12px; }
 
-    .modal-detail-wrapper {
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-    }
-
-    .detail-img-box {
-        max-width: 100%;
-        width: 100%;
-    }
-
-    .detail-info-box {
-        width: 100%;
-        text-align: center;
-    }
-
-    .detail-ingredients-title {
-        justify-content: center;
-    }
-
-    .detail-ingredients-content {
-        text-align: left;
-    }
-}
-/* 재료 테이블 스타일 */
-.ingredients-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    font-size: 0.9rem;
+.btn-modal {
+    flex: 1; height: 54px; border-radius: 50px; font-weight: 700; font-size: 1rem;
+    cursor: pointer; transition: all 0.3s ease; border: 1px solid transparent;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 
-.ingredients-table th, .ingredients-table td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.btn-modal.primary { background: rgba(52, 152, 219, 0.2); border-color: rgba(52, 152, 219, 0.4); color: #fff; }
+.btn-modal.secondary { background: rgba(255, 255, 255, 0.05); border-color: var(--glass-border); color: var(--text-sub); }
+.btn-modal.danger { background: rgba(231, 76, 60, 0.15); border-color: rgba(231, 76, 60, 0.4); color: #ff7675; }
+
+/* 결제하기 버튼 전용 초록색 테마 */
+.btn-modal.success {
+    background: rgba(46, 204, 113, 0.2);
+    border-color: rgba(46, 204, 113, 0.4);
+    color: #2ecc71;
 }
 
-.ingredients-table th {
-    color: var(--text-sub);
-    font-weight: 600;
-    width: 60%;
+.btn-modal:hover { transform: translateY(-2px); filter: brightness(1.2); }
+.btn-modal.success:hover { box-shadow: 0 5px 15px rgba(46, 204, 113, 0.2); }
+
+/* ===========================================
+   [메뉴 선택] 탭 & 그리드
+   =========================================== */
+.menu-tabs {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;
+    padding-bottom: 15px; border-bottom: 1px solid var(--glass-border);
 }
 
-.ingredients-table td {
-    color: var(--text-main);
-    text-align: right; /* 용량은 우측 정렬 */
+.tab-btn {
+    background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
+    color: var(--text-sub); padding: 8px 18px; border-radius: 50px; cursor: pointer; transition: all 0.3s ease;
 }
 
-.glass-form .input-group {
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+.tab-btn.active {
+    background: var(--accent-blue); color: white; border-color: var(--accent-blue);
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
 }
 
-.glass-form label {
-    font-size: 0.85rem;
-    color: var(--text-sub);
+.menu-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+    max-height: 450px;
+    overflow-y: auto;
+    padding-right: 5px;
 }
 
-.glass-form input, .glass-form select, .glass-form textarea {
-    background: var(--input-bg);
-    border: 1px solid var(--input-border);
-    border-radius: 8px;
-    padding: 10px;
-    color: var(--text-main);
-    outline: none;
+.menu-card {
+    background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 18px; padding: 15px; cursor: pointer; transition: all 0.2s ease;
+    display: flex; flex-direction: column; justify-content: space-between; min-height: 110px;
 }
 
-.save-btn {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    background: var(--accent-blue);
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
+.menu-card:hover { background: rgba(52, 152, 219, 0.15); border-color: var(--accent-blue); transform: translateY(-3px); }
+.menu-card-name { font-size: 0.95rem; font-weight: 600; color: var(--text-main); margin-bottom: 8px; }
+.menu-card-price { font-size: 0.9rem; color: var(--accent-yellow); font-weight: 700; }
+
+/* ===========================================
+   [기타] 인풋 & 스크롤바
+   =========================================== */
+.capsule-input {
+    width: 90%; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--glass-border);
+    border-radius: 50px; padding: 16px 25px; color: var(--text-main); outline: none; transition: all 0.3s ease;
 }
 
-.save-btn:hover {
-    filter: brightness(1.2);
-}
+.menu-grid::-webkit-scrollbar { width: 5px; }
+.menu-grid::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+
+/* 숨김 처리 */
+.hidden { display: none !important; }

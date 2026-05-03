@@ -10,32 +10,29 @@
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
+    <!-- 1. 컨트롤러 스캔: 오직 Controller 패키지만 스캔 -->
     <context:component-scan base-package="com.test.Controller" />
+
+    <!-- 2. 어노테이션 기반 컨트롤러 활성화 -->
     <mvc:annotation-driven />
 
+    <!-- 3. 뷰 리졸버 설정 -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/views/" />
         <property name="suffix" value=".jsp" />
     </bean>
 
-    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
-        <!-- 기본 언어를 영어로 설정 -->
-        <property name="defaultLocale" value="en" />
-    </bean>
-
-    <!-- 정적 자원 설정  -->
+    <!-- 4. 정적 자원 설정 -->
     <mvc:resources mapping="/resources/**" location="/resources/" />
-<!--    <mvc:resources mapping="/js/**" location="/resources/js/" />-->
-<!--    <mvc:resources mapping="/css/**" location="/resources/css/" />-->
-<!--    <mvc:resources mapping="/images/**" location="/resources/images/" />-->
 
+    <!-- 5. 인터셉터 설정 -->
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
-            <mvc:exclude-mapping path="/"/>           <!-- RootController (로그인창) -->
-            <mvc:exclude-mapping path="/auth/**"/>    <!-- 로그인 처리 로직(POST) 경로 필수 제외 -->
+            <mvc:exclude-mapping path="/"/>           <!-- 로그인 페이지 -->
+            <mvc:exclude-mapping path="/auth/**"/>    <!-- 로그인 처리 -->
             <mvc:exclude-mapping path="/resources/**" />
-            <mvc:exclude-mapping path="/changeLang"/> <!-- 언어 설정 -->
+            <mvc:exclude-mapping path="/changeLang"/> <!-- 언어 변경 API -->
             <bean class="com.test.interceptor.LoginInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>

@@ -4,7 +4,7 @@
 
 <mapper namespace="com.test.dao.MenuDAO">
 
-    <!-- 1. 메뉴 리스트 조회 -->
+    <!-- 1. 메뉴 리스트 조회 (카테고리별 정렬) -->
     <select id="selectAllMenuList" resultType="com.test.model.MenuDTO">
         SELECT
             menu_idx    AS menuIdx,
@@ -20,28 +20,27 @@
         ORDER BY category, menu_idx DESC
     </select>
 
-    <!-- 2. 메뉴 상세 조회 (상세 데이터는 없을 수도 있으므로 LEFT JOIN 유지) -->
+    <!-- 2. 메뉴 상세 조회 (LEFT JOIN을 통한 DTL 데이터 결합) -->
     <select id="selectMenuDetail" resultType="com.test.model.MenuDTO">
         SELECT
-        m.menu_idx   AS menuIdx,
-        m.shopcode   AS shopCode,
-        m.category,
-        m.menu_name  AS menuName,
-        m.price,
-        m.currency,
-        m.image_path AS imagePath,
-        m.description,
-        d.ingredients
+            m.menu_idx   AS menuIdx,
+            m.shopcode   AS shopCode,
+            m.category,
+            m.menu_name  AS menuName,
+            m.price,
+            m.currency,
+            m.image_path AS imagePath,
+            m.description,
+            d.ingredients
         FROM MST_menu_info m
-        LEFT JOIN DTL_menu_info d
-        ON m.menu_idx = d.menu_idx
-        AND m.shopcode = d.shopcode
+                 LEFT JOIN DTL_menu_info d
+                           ON m.menu_idx = d.menu_idx
+                               AND m.shopcode = d.shopcode
         WHERE m.menu_idx = #{menuIdx}
-        AND m.shopcode = #{shopCode}  <!-- shopCode로 통일 -->
+          AND m.shopcode = #{shopCode}
     </select>
 
-    <!-- 3. 메뉴 마스터 등록 -->
-    <!-- [수정] NULL값이 들어올 수 있는 필드(imagePath, description)에 jdbcType 설정을 추가하여 에러 방지 -->
+    <!-- 3. 메뉴 마스터 등록 (PK 자동 생성 및 공유 설정) -->
     <insert id="insertMenuMst" parameterType="com.test.model.MenuDTO" useGeneratedKeys="true" keyProperty="menuIdx">
         INSERT INTO MST_menu_info (
             shopcode,
@@ -66,8 +65,7 @@
                  )
     </insert>
 
-    <!-- 4. 메뉴 상세 등록 -->
-    <!-- [수정] ingredients가 비어있을 경우를 대비해 jdbcType 추가 -->
+    <!-- 4. 메뉴 상세 등록 (insertMenuMst에서 생성된 menuIdx 사용) -->
     <insert id="insertMenuDtl" parameterType="com.test.model.MenuDTO">
         INSERT INTO DTL_menu_info (
             menu_idx,
@@ -84,7 +82,7 @@
                  )
     </insert>
 
-    <!-- 5. 메뉴 중복 체크 -->
+    <!-- 5. 메뉴 이름 중복 체크 -->
     <select id="checkMenuNameExists" resultType="int">
         SELECT COUNT(*)
         FROM MST_menu_info

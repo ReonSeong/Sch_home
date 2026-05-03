@@ -25,17 +25,28 @@
 - [x] add mapper
 - [x] add fileUpload (util)
 ##  2026-05-01
-- [ ] image Upload test(jpg,png) + validation
-- [ ] Check Multi - Language (when finish logic and design, lang.xml)
-- [ ] Unify Code Style.(mapper, controller, DAO, DTO)
-- [ ] show restaurant current Table status (what ordered)
-  - [ ] DB
+- [x] image Upload test(jpg,png) + validation
+- [x] Check Multi - Language (when finish logic and design, lang.xml)
+- [X] Refactoring.(mapper, controller, DAO, DTO, Service layer)
+- [x] Add Error Page
+- [x] Unify Modal
+- [x] Add file change log
+- [x] Add Json Parsing util(jsonParser.java)
 
-##
+
+##  2026-05-03
 - [ ] set sales status
+- [ ] show restaurant current Table status (what ordered)
+    - [ ] DB
+    - 
+##
+- [ ] add reservation function to table_status
 - [ ] stock manage
+- [ ] Dashboard data show (chart.js)
 - [ ] Customer management
 - [ ] Auth management
+- [ ] check responsive CSS (main target: iphone8 , ipad mini, FHD chrome)
+- [ ] Unify CSS files. (Design, JSP div tags)
 - [ ] AWS operate
 - [ ] API connection with local web market (Macro, Carefu etc)
 -

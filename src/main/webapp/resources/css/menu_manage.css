@@ -1,17 +1,14 @@
 /* ===========================================
-   1. 메뉴 관리 페이지 메인 레이아웃
-   =========================================== */
+    File Name : menu_manage.css
+    Writer : ReonQ
+    Updated Date     Version     User        Log
+    2026-05-01           0.1                 First make
 
-/* 메인 컨텐츠 영역 */
-.main-content {
-    margin-left: 260px;     /* 사이드바 너비만큼 여백 */
-    padding-top: 110px;     /* 헤더 높이 + 상단 여백 */
-    padding-left: 40px;
-    padding-right: 40px;
-    padding-bottom: 40px;
-    min-height: 100vh;
-    transition: all 0.3s ease;
-}
+    Now Version : 0.1
+
+    Description:
+    menu_manage.jsp Design
+  =========================================== */
 
 /* [수정] 컨텐츠 헤더: 제목과 버튼을 좌우 끝으로 배치 */
 .content-header {
@@ -313,4 +310,8 @@
 }
 
 @media (max-width: 1024px) {
-    .main-content { margin-left: 0; padding: 100
+    .main-content {
+        margin-left: 0;
+        padding: 100px;
+    }
+}
