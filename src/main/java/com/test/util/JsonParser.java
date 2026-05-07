@@ -14,8 +14,13 @@ package com.test.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.test.controller.DashboardController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JsonParser {
+
+    private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -23,7 +28,7 @@ public class JsonParser {
         try {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error("*****JsonParser Error*****", e.getMessage());
             return "[]"; // if error return empty
         }
     }

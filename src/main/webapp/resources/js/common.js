@@ -43,12 +43,62 @@ function openModal(id) {
     }
 }
 
-function closeModal(id) {
-    const modal = document.getElementById(id);
-    if (modal) {
-        modal.classList.remove('active');
-        modal.classList.add('hidden');
+// function closeModal(id) {
+//     const modal = document.getElementById(id);
+//     if (modal) {
+//         modal.classList.remove('active');
+//         modal.classList.add('hidden');
+//     }
+// }
+
+/**
+ * 공통 알림 모달 호출 함수
+ * @param {string} title 제목
+ * @param {string} message 상세 내용
+ * @param {string} type 'success', 'info', 'warning' (타입에 따른 아이콘 변경)
+ * @param {function} callback 확인 버튼 누른 후 실행할 함수 (옵션)
+ */
+let infoModalCallback = null;
+
+function showAlert(title, message, type = 'success', callback = null) {
+    const $modal = $('#infoModal');
+    const $icon = $('#infoIcon i');
+
+    // 제목과 메시지 세팅
+    $('#infoTitle').text(title);
+    $('#infoDetail').text(message);
+
+    // 타입에 따른 아이콘 및 색상 변경
+    $icon.removeClass();
+    if (type === 'success') {
+        $icon.addClass('fas fa-check-circle').css('color', '#2ecc71');
+    } else if (type === 'warning') {
+        $icon.addClass('fas fa-exclamation-circle').css('color', '#f1c40f');
+    } else {
+        $icon.addClass('fas fa-info-circle').css('color', '#3498db');
     }
+
+    // 콜백 저장
+    infoModalCallback = callback;
+
+    // 모달 열기
+    $modal.removeClass('hidden').addClass('active').css('display', 'flex');
+}
+
+/**
+ * 확인 버튼 클릭 시 호출
+ */
+function handleInfoConfirm() {
+    closeModal('infoModal');
+    if (typeof infoModalCallback === 'function') {
+        infoModalCallback(); // 예약된 작업 실행
+        infoModalCallback = null;
+    }
+}
+
+// 기존 closeModal 함수와 호환
+function closeModal(id) {
+    $('#' + id).removeClass('active').addClass('hidden').css('display', 'none');
 }
 
 /**

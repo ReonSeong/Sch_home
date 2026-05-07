@@ -9,7 +9,7 @@
 
     <!-- DispatcherServlet Context: 웹 관련 빈 설정 -->
 
-    <!-- @Controller 어노테이션 활성화 -->
+    <!-- @controller 어노테이션 활성화 -->
     <annotation-driven />
 
     <!-- 정적 리소스(이미지, CSS, JS) 경로 설정 -->

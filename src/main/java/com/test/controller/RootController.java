@@ -5,14 +5,18 @@
   Time: 오후 4:53
 */
 
-package com.test.Controller;
+package com.test.controller;
 
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller // 스프링 MVC 컨트롤러 선언
 public class RootController {
+
+    private static final Logger logger = LoggerFactory.getLogger(RootController.class);
 
     @GetMapping("/")
     public String index(HttpSession session) {

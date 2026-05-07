@@ -35,21 +35,31 @@
 
 
 ##  2026-05-03
-- [ ] set sales status
-- [ ] show restaurant current Table status (what ordered)
-    - [ ] DB
-    - 
-##
-- [ ] add reservation function to table_status
-- [ ] stock manage
+- [x] show restaurant current Table status (what ordered)
+    - [x] DB
+- [X] Add JS logger(Pure JS)
+
+##  2026-05-07
+- [x] set sales status
+  - [x] DB
+  - [X] JSP,JS(chart.js, status.js)
+  - [X] Refactor Sales -> Order 
+  - [X] Add Stats(common stats setting
+  
+## TO-DO
 - [ ] Dashboard data show (chart.js)
 - [ ] Customer management
 - [ ] Auth management
-- [ ] check responsive CSS (main target: iphone8 , ipad mini, FHD chrome)
+- [ ] stock manage
 - [ ] Unify CSS files. (Design, JSP div tags)
 - [ ] AWS operate
+- [ ] Check Language
+
+- [ ] add reservation function to table_status
+
+- [ ] check responsive CSS (main target: iphone8 , ipad mini, FHD chrome)
 - [ ] API connection with local web market (Macro, Carefu etc)
--
+- [ ] Session check when Strong Refresh(Doesnt send to login page, now showing 404)
 -
 
 ### 💡 참고 사항

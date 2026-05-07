@@ -1,9 +1,14 @@
-/*
-  Created by IntelliJ IDEA.
-  User: ReonQ
-  Date: 2026-05-01
-  Time: 오후 5:47
-*/
+/**
+ *  File Name : AuthService.java
+ *
+ *  Updated Date     Version     User        Change log
+ *  2026-05-01           0.1     ReonQ       Published
+ *
+ *  Now Version : 0.1
+ *
+ *  Description:
+ *  AuthService.java
+ */
 
 package com.test.service;
 

@@ -1,12 +1,13 @@
-<%-------------------------------------------------------------%>
-<%-- File Name : error.jsp                                   --%>
-<%-- Writer : ReonQ                                          --%>
-<%-- Updated Date     Version     User        Log            --%>
-<%-- 2026-05-01           0.1                 make 404 Error --%>
-<%-- 2026-05-01           0.2                 Add 500 Error  --%>
-<%--                                                         --%>
-<%-- Now Version : 0.2                                       --%>
-<%-------------------------------------------------------------%>
+<%--
+     File Name : error.jsp
+     Updated Date     Version     User        Log
+     2026-05-01           0.1     ReonQ       Published
+     2026-05-01           0.2     ReonQ       Add 500 Error
+
+     Now Version : 0.2
+    #TO-DO
+    1. Check J query data ( ${errorCode == '404'}" seems doesn't work)
+--%>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>

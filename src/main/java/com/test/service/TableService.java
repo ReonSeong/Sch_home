@@ -1,14 +1,23 @@
-/*
-  Created by IntelliJ IDEA.
-  User: ReonQ
-  Date: 2026-05-01
-  Time: 오후 5:34
-*/
+/**
+ *  File Name : TableService.java
+ *
+ *  Updated Date     Version     User        Change log
+ *  2026-05-01           0.1     ReonQ       Published
+ *
+ *  Now Version : 0.1
+ *
+ *  Description:
+ *  TableService.java
+ */
+
 
 package com.test.service;
 
 import com.test.dao.TableDAO;
+import com.test.interceptor.LoginInterceptor;
 import com.test.model.TableDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +26,8 @@ import java.util.List;
 
 @Service
 public class TableService {
+
+    private static final Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
 
     @Autowired
     private TableDAO tableDAO;
@@ -38,7 +49,7 @@ public class TableService {
             }
             return true;
         } catch (Exception e) {
-            // 로그 기록 후 롤백 유도
+            logger.error("*****TableService syncTableLayout Error*****", e.getMessage());
             return false;
         }
     }

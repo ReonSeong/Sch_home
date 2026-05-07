@@ -32,6 +32,20 @@
     </div>
 </div>
 
+<!-- Confirm/Info Modal -->
+<div id="infoModal" class="modal-overlay hidden">
+    <div class="modal-content info-mode">
+        <button class="modal-close-x" onclick="closeModal('infoModal')">&times;</button>
+        <div class="info-icon" id="infoIcon">
+            <i class="fas fa-check-circle"></i> </div>
+        <div class="info-message-title" id="infoTitle">Success</div>
+        <div class="info-message-detail" id="infoDetail">Description...</div>
+        <div class="modal-footer">
+            <button class="btn-modal primary" onclick="handleInfoConfirm()">확인</button>
+        </div>
+    </div>
+</div>
+
 <!-- [table_status Section] -->
 
 <!-- 1. Order Detail Modal (주문 상세 정보) -->
@@ -42,7 +56,6 @@
                 <i class="fas fa-receipt"></i>
                 <span id="info-table-name"></span> <fmt:message key="table.modal.orderTitle" bundle="${msg}" />
             </h3>
-            <!-- 우측 상단 X 닫기 버튼 -->
             <button class="modal-close-x" onclick="closeTableModal('orderDetailModal')">&times;</button>
         </div>
         <div class="modal-body">
@@ -59,6 +72,10 @@
                 </table>
             </div>
 
+            <div id="discount-info-area" class="discount-display" style="display:none; text-align: right; color: #e74c3c; padding: 5px 20px;">
+                <span>할인 금액: -<span id="display-discount-amount">0</span>원</span>
+            </div>
+
             <div class="total-price-area">
                 <span class="label"><fmt:message key="table.modal.totalLabel" bundle="${msg}" /></span>
                 <span class="amount">
@@ -71,15 +88,24 @@
                 </span>
             </div>
         </div>
-        <div class="modal-footer">
-            <%-- 주문 추가 버튼 (기본색상) --%>
-            <button class="btn-modal primary" onclick="showMenuSelection()">
-                <i class="fas fa-plus"></i> <fmt:message key="table.btn.addOrder" bundle="${msg}" />
-            </button>
-            <%-- 결제하기 버튼 (강조색상) --%>
-            <button class="btn-modal success" onclick="processPayment()">
-                <i class="fas fa-credit-card"></i> 결제하기
-            </button>
+
+        <div class="modal-footer split">
+            <div class="footer-left">
+                <button class="btn-modal primary" onclick="showMenuSelection()">
+                    <i class="fas fa-plus"></i> <fmt:message key="table.btn.addOrder" bundle="${msg}" />
+                </button>
+                <button class="btn-modal warning" onclick="applyDiscount()">
+                    <i class="fas fa-tag"></i> 할인
+                </button>
+            </div>
+            <div class="footer-right">
+                <button class="btn-modal success" onclick="processPayment('CARD')">
+                    <i class="fas fa-credit-card"></i> 카드
+                </button>
+                <button class="btn-modal cash" onclick="processPayment('CASH')" style="background-color: #27ae60; color: white;">
+                    <i class="fas fa-money-bill-wave"></i> 현금
+                </button>
+            </div>
         </div>
     </div>
 </div>

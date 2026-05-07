@@ -1,4 +1,4 @@
-package com.test.Controller;
+package com.test.controller;
 
 import com.test.model.AuthDTO;
 import com.test.service.DashboardService;

@@ -38,7 +38,7 @@
             <span><fmt:message key="menu.sales" bundle="${msg}" /></span>
         </a>
 
-        <a href="${pageContext.request.contextPath}/stock/manage" class="nav-item ${activeMenu == 'stock' ? 'active' : ''}">
+        <a href="${pageContext.request.contextPath}/stock/status" class="nav-item ${activeMenu == 'stock' ? 'active' : ''}">
             <i class="fas fa-boxes-stacked"></i>
             <span><fmt:message key="menu.stock" bundle="${msg}" /></span>
         </a>

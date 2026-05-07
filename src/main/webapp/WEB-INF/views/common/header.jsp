@@ -22,6 +22,8 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/common.js"></script>
+<script src="${pageContext.request.contextPath}/resources/js/Logger.js"></script>
+<link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/resources/images/favicon.ico">
 
 <header class="main-header">
     <div class="header-left">

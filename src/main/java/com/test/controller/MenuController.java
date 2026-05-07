@@ -4,11 +4,13 @@
   Date: 2026-04-30
   Time: 오후 4:37
 */
-package com.test.Controller;
+package com.test.controller;
 
 import com.test.model.MenuDTO;
 import com.test.service.MenuService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,8 @@ import java.util.List;
 
 @Controller
 public class MenuController {
+
+    private static final Logger logger = LoggerFactory.getLogger(MenuController.class);
 
     @Autowired
     private MenuService menuService;
@@ -48,6 +52,7 @@ public class MenuController {
         } catch (IllegalArgumentException e) {
             return "invalid_file";
         } catch (Exception e) {
+            logger.error("*****MenuController saveMenu Error*****", e.getMessage());
             return "error";
         }
     }

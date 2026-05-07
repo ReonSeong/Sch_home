@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    File Name : OrderMapper.xml
+
+    Updated Date     Version     User        Change log
+    2026-05-03           0.1     ReonQ       Published
+    2026-05-07           0.2     ReonQ       Refactor Sales to Order
+
+    Now Version : 0.1
+
+    Description:
+    OrderMapper.xml
+-->
+<mapper namespace="com.test.dao.OrderDAO">
+
+    <insert id="insertOrderMaster" parameterType="com.test.model.OrderDTO" useGeneratedKeys="true" keyProperty="orderId">
+        INSERT INTO MST_SALES_info (
+            SHOP_CODE, TABLE_IDX, TOTAL_PRICE, FINAL_PRICE, PAY_METHOD,
+            CREATE_USER, CREATE_TIME, UPDATE_USER, UPDATE_TIME, DEL_YN,
+            ATT_1, ATT_2, ATT_3, ATT_4, ATT_5
+        ) VALUES (
+                     #{shopCode},
+                     #{tableIdx},
+                     #{totalAmount},
+                     IFNULL(#{finalPrice}, #{totalAmount}),
+                     IFNULL(#{payMethod}, 'CASH'),
+                     #{createUser},
+                     CURRENT_TIMESTAMP,
+                     #{createUser},
+                     CURRENT_TIMESTAMP,
+                     'N',
+                     #{att1}, #{att2}, #{att3}, #{att4}, #{att5}
+                 )
+    </insert>
+
+    <insert id="insertOrderDetails" parameterType="java.util.List">
+        INSERT INTO DTL_SALES_info (
+        SALE_ID,
+        MENU_IDX,
+        MENU_NAME,
+        UNIT_PRICE,
+        QUANTITY,
+        CREATE_USER,
+        CREATE_TIME,
+        UPDATE_USER,
+        UPDATE_TIME,
+        ATT_1, ATT_2, ATT_3, ATT_4, ATT_5
+        ) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.orderId}, #{item.menuIdx},
+            #{item.menuName},
+            #{item.unitPrice},
+            #{item.quantity},
+            #{item.createUser},
+            CURRENT_TIMESTAMP,
+            #{item.createUser},
+            CURRENT_TIMESTAMP,
+            #{item.att1}, #{item.att2}, #{item.att3}, #{item.att4}, #{item.att5}
+            )
+        </foreach>
+    </insert>
+
+    <resultMap id="OrderFullMap" type="com.test.model.OrderDTO">
+        <id property="orderId" column="SALE_ID" />
+        <result property="shopCode" column="SHOP_CODE" />
+        <result property="tableIdx" column="TABLE_IDX" />
+        <result property="totalAmount" column="TOTAL_PRICE" />
+        <result property="finalPrice" column="FINAL_PRICE" />
+        <result property="payMethod" column="PAY_METHOD" />
+        <result property="createTime" column="M_CREATE_TIME" />
+        <result property="createUser" column="M_CREATE_USER" />
+        <result property="att1" column="M_ATT1" />
+
+        <collection property="itemList" ofType="com.test.model.OrderDTO$OrderDetailDTO">
+            <id property="orderDetailId" column="DETAIL_ID" />
+            <result property="orderId" column="SALE_ID" />
+            <result property="menuIdx" column="MENU_IDX" />
+            <result property="menuName" column="MENU_NAME" />
+            <result property="unitPrice" column="UNIT_PRICE" />
+            <result property="quantity" column="QUANTITY" />
+            <result property="att1" column="D_ATT1" />
+        </collection>
+    </resultMap>
+
+    <select id="selectAllOrdersWithDetail" parameterType="String" resultMap="OrderFullMap">
+        SELECT
+            M.SALE_ID, M.SHOP_CODE, M.TABLE_IDX, M.TOTAL_PRICE, M.FINAL_PRICE, M.PAY_METHOD,
+            M.CREATE_TIME AS M_CREATE_TIME, M.CREATE_USER AS M_CREATE_USER, M.ATT_1 AS M_ATT1,
+            D.DETAIL_ID, D.MENU_IDX, D.MENU_NAME, D.UNIT_PRICE, D.QUANTITY, D.ATT_1 AS D_ATT1
+        FROM MST_SALES_info M
+                 LEFT JOIN DTL_SALES_info D ON M.SALE_ID = D.SALE_ID
+        WHERE M.SHOP_CODE = #{shopCode}
+          AND M.DEL_YN = 'N'
+        ORDER BY M.CREATE_TIME DESC, D.DETAIL_ID ASC
+    </select>
+
+</mapper>

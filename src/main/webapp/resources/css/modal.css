@@ -3,7 +3,7 @@
  *  Updated Date     Version     User        Log
  *  2026-05-01           0.1     ReonQ       Published
  *  2026-05-01           0.2     ReonQ       Add order_add css(.menu-grid)
- *
+ *  2026-05-07           0.3     ReonQ       Add Error,info modal
  *  Now Version : 0.1
  *
  *  Description:
@@ -185,6 +185,39 @@
 
 .menu-grid::-webkit-scrollbar { width: 5px; }
 .menu-grid::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+
+/* 컨펌 모달 아이콘 애니메이션 */
+.info-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.info-message-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+    color: var(--text-main);
+}
+
+.info-message-detail {
+    font-size: 1rem;
+    color: var(--text-sub);
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+/* 모달 애니메이션 추가 (선택사항) */
+.modal-content.active {
+    animation: modalShow 0.3s ease-out;
+}
+
+@keyframes modalShow {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 /* 숨김 처리 */
 .hidden { display: none !important; }

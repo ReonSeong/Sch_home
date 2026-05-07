@@ -3,8 +3,9 @@
  * Updated Date     Version     User        Change Log
  * 2026-05-01           0.1     ReonQ       Published
  * 2026-05-01           0.2     ReonQ       Menu Cache & Order Logic Integration
+ * 2026-05-07           0.3     ReonQ       Align JSON payload keys with SalesDTO
  *
- * Now Version : 0.1
+ * Now Version : 0.3
  *
  * Description:
  * - Modal Control
@@ -15,6 +16,7 @@
 let isEditMode = false;
 let tempIdCounter = 0;
 let targetElementFullId = null;
+let currentDiscount = 0;
 
 // 현재 테이블들의 임시 주문 내역 (Key: tableIdx)
 let currentOrders = {};
@@ -165,9 +167,41 @@ function addMenuToOrder(menuIdx, menuName, price) {
 }
 
 /**
- * [5] 결제 처리 (DB 전송 및 로컬 데이터 삭제)
+ * 할인 적용 함수
  */
-function processPayment() {
+function applyDiscount() {
+    const totalRaw = parseInt($('#info-total-price').text().replace(/,/g, '')) + currentDiscount;
+    const discountInput = prompt("할인할 금액을 입력하세요 (숫자만)", currentDiscount);
+
+    if (discountInput === null) return; // 취소 시
+
+    const discountVal = parseInt(discountInput) || 0;
+
+    if (discountVal > totalRaw) {
+        alert("할인 금액이 총액보다 클 수 없습니다.");
+        return;
+    }
+
+    currentDiscount = discountVal;
+
+    // UI 업데이트
+    if (currentDiscount > 0) {
+        $('#discount-info-area').show();
+        $('#display-discount-amount').text(currentDiscount.toLocaleString());
+    } else {
+        $('#discount-info-area').hide();
+    }
+
+    // 최종 가격 재계산 표시
+    const finalPrice = totalRaw - currentDiscount;
+    $('#info-total-price').text(finalPrice.toLocaleString());
+}
+
+/**
+ * 결제 처리 (수정 버전)
+ * @param {string} payMethod 'CARD' 또는 'CASH'
+ */
+function processPayment(payMethod) {
     const tableIdx = $('#info-table-name').attr('data-current-idx');
     const orders = currentOrders[tableIdx] || [];
 
@@ -176,15 +210,28 @@ function processPayment() {
         return;
     }
 
-    const totalDisplay = $('#info-total-price').text();
-    if (!confirm(`총액 ${totalDisplay}${window.i18n.currency} 결제를 진행하시겠습니까?`)) {
+    const finalPriceText = $('#info-total-price').text();
+    const finalPrice = parseInt(finalPriceText.replace(/,/g, ''));
+    const totalPrice = finalPrice + currentDiscount; // 할인 전 원금
+
+    if (!confirm(`[${payMethod}] ${finalPriceText}${window.i18n.currency} 결제를 진행하시겠습니까?`)) {
         return;
     }
 
+    const mappedItemList = orders.map(item => ({
+        menuIdx: item.menuIdx,
+        menuName: item.menuName,
+        unitPrice: item.price,
+        quantity: item.quantity
+    }));
+
     const paymentData = {
-        tableIdx: tableIdx,
-        orders: orders,
-        totalPrice: parseInt(totalDisplay.replace(/,/g, ''))
+        tableIdx: parseInt(tableIdx),
+        totalPrice: totalPrice,      // 할인 전 금액
+        finalPrice: finalPrice,      // 실제 결제 금액
+        payMethod: payMethod,        // CARD or CASH
+        att1: currentDiscount.toString(), // 할인금액을 비고란(att1)에 기록 (선택사항)
+        itemList: mappedItemList
     };
 
     $.ajax({
@@ -193,18 +240,29 @@ function processPayment() {
         contentType: "application/json",
         data: JSON.stringify(paymentData),
         success: function(res) {
-            alert("결제가 완료되었습니다.");
+            if (res.trim() === "success") {
+                showAlert(
+                    "결제 완료",
+                    `${payMethod} 결제가 정상적으로 처리되었습니다.`,
+                    "success",
+                    function() {
+                        // 확인 버튼을 누른 후 실행될 로직들
+                        currentDiscount = 0;
+                        $('#discount-info-area').hide();
+                        delete currentOrders[tableIdx];
+                        localStorage.setItem("POS_CURRENT_ORDERS", JSON.stringify(currentOrders));
 
-            // 해당 테이블 데이터 초기화
-            delete currentOrders[tableIdx];
-            localStorage.setItem("POS_CURRENT_ORDERS", JSON.stringify(currentOrders));
-
-            // UI 업데이트 (Empty 상태로 복구)
-            updateTableUI(tableIdx);
-            closeTableModal('orderDetailModal');
+                        updateTableUI(tableIdx);
+                        closeTableModal('orderDetailModal');
+                    }
+                );
+            } else {
+                // 실패 시에도 사용 가능
+                showAlert("결제 실패", res, "warning");
+            }
         },
         error: function() {
-            alert("결제 처리 중 오류가 발생했습니다.");
+            showError("통신 오류 발생");
         }
     });
 }

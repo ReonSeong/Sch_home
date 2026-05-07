@@ -13,6 +13,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import java.util.Locale;
 
 public class LoginInterceptor implements HandlerInterceptor {
+
     private static final Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
 
     @Override

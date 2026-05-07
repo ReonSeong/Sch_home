@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    File Name : StatsMapper.xml
+
+    Updated Date     Version     User        Change log
+    2026-05-07           0.1     ReonQ       Published
+
+    Now Version : 0.1
+
+    Description:
+    StatsMapper.xml
+-->
+<mapper namespace="com.test.dao.StatsDAO">
+
+    <select id="selectDailyStats" resultType="com.test.model.StatsDTO">
+        SELECT
+            DATE_FORMAT(CREATE_TIME, '%Y-%m-%d') AS label,
+            COUNT(SALE_ID) AS count,
+            SUM(FINAL_PRICE) AS totalAmount
+        FROM MST_SALES_info
+        WHERE DATE_FORMAT(CREATE_TIME, '%Y-%m') = #{month}
+          AND DEL_YN = 'N'
+        GROUP BY label
+        ORDER BY label ASC
+    </select>
+
+    <select id="selectHourlyStats" resultType="com.test.model.StatsDTO">
+        SELECT
+            HOUR(CREATE_TIME) AS label,
+            COUNT(SALE_ID) AS count,
+            SUM(FINAL_PRICE) AS totalAmount
+        FROM MST_SALES_info
+        WHERE DATE_FORMAT(CREATE_TIME, '%Y-%m-%d') = #{date}
+          AND DEL_YN = 'N'
+        GROUP BY label
+        ORDER BY CAST(label AS UNSIGNED) ASC
+    </select>
+
+    <select id="selectMenuStats" resultType="com.test.model.StatsDTO">
+        SELECT
+            d.MENU_NAME AS label,
+            SUM(d.QUANTITY) AS count,
+            SUM(d.UNIT_PRICE * d.QUANTITY) AS totalAmount
+        FROM MST_SALES_info m
+            JOIN DTL_SALES_info d ON m.SALE_ID = d.SALE_ID
+        WHERE DATE_FORMAT(m.CREATE_TIME, '%Y-%m-%d') = #{date}
+          AND HOUR(m.CREATE_TIME) = #{hour}
+          AND m.DEL_YN = 'N'
+        GROUP BY label
+        ORDER BY totalAmount DESC
+    </select>
+
+</mapper>
